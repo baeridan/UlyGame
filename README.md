@@ -80,6 +80,16 @@ Si può pubblicare gratis su un servizio che esegue Node.js (Render, Railway, Fl
 
 Con HTTPS il gioco diventa installabile: su iPad da Safari ▸ Condividi ▸ *Aggiungi alla schermata Home*, su Android dal menu di Chrome ▸ *Installa app*.
 
+## 📱 App Android da installare (APK)
+
+```bash
+npm run apk   # serve l'Android SDK (ANDROID_HOME); crea android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+L'APK è firmato con una chiave fissa salvata nel progetto (`android/app/debug.keystore`), così le versioni nuove si installano sopra
+quelle vecchie senza perdere i progressi. Nell'app la voce usa la sintesi vocale di Android.
+Per installarlo sul tablet: apri il file .apk e consenti l'installazione da "origini sconosciute" quando Android lo chiede.
+
 ## 📱 App per gli store (Capacitor)
 
 I progetti nativi sono già nelle cartelle `android/` e `ios/`.

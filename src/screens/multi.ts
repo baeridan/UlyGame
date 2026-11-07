@@ -51,8 +51,8 @@ export function showMultiMenu() {
         { class: 'multi-card online' },
         h('h2', {}, '🌐 Online con un amico'),
         h('p', {}, 'Ognuno sul suo tablet. Si entra con un codice segreto di dinosauri. Niente chat, solo emoji!'),
-        ...(import.meta.env.VITE_SINGLE
-          ? [h('p', { class: 'muted' }, 'Il gioco online funziona nella versione installata con il server. In questa versione di prova puoi giocare sullo stesso dispositivo.')]
+        ...(import.meta.env.VITE_SINGLE && !save.settings.serverUrl
+          ? [h('p', { class: 'muted' }, 'Per giocare online serve un server: un genitore può inserire il suo indirizzo nell\'area genitori. Intanto potete giocare sullo stesso tablet!')]
           : [brickBtn('🏠 Crea una stanza', () => showOnline('create'), 'blue', 'big'), brickBtn('🔑 Entra con il codice', () => showOnline('join'), 'yellow', 'big')])
       )
     )

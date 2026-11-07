@@ -1,4 +1,9 @@
 import { save } from './store';
+import { Capacitor } from '@capacitor/core';
+import { TextToSpeech } from '@capacitor-community/text-to-speech';
+
+/** Nell'app Android/iOS si usa la voce nativa del sistema (il WebView non ha la sintesi vocale). */
+const native = Capacitor.isNativePlatform();
 
 let voice: SpeechSynthesisVoice | null = null;
 
@@ -29,7 +34,15 @@ function clean(text: string) {
 }
 
 export function speak(text: string, opts: { pitch?: number; rate?: number } = {}) {
-  if (!save.settings.voice || !('speechSynthesis' in window)) return;
+  if (!save.settings.voice) return;
+  if (native) {
+    TextToSpeech.stop()
+      .catch(() => {})
+      .then(() => TextToSpeech.speak({ text: clean(text), lang: 'it-IT', rate: opts.rate ?? 0.95, pitch: opts.pitch ?? 1.1, volume: 1, category: 'ambient' }))
+      .catch(() => {});
+    return;
+  }
+  if (!('speechSynthesis' in window)) return;
   try {
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(clean(text));
@@ -44,5 +57,9 @@ export function speak(text: string, opts: { pitch?: number; rate?: number } = {}
 }
 
 export function stopSpeech() {
+  if (native) {
+    TextToSpeech.stop().catch(() => {});
+    return;
+  }
   if ('speechSynthesis' in window) speechSynthesis.cancel();
 }
