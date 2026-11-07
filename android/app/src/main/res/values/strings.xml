@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">L\'Isola di Uly</string>
+    <string name="title_activity_main">L\'Isola di Uly</string>
+    <string name="package_name">it.ulygame.isola</string>
+    <string name="custom_url_scheme">it.ulygame.isola</string>
+</resources>

@@ -1,0 +1,32 @@
+{
+  "name": "ulygame",
+  "private": true,
+  "version": "1.0.0",
+  "description": "L'Isola di Uly – gioco educativo di matematica e logica con dinosauri di mattoncini e mondo a blocchi, per bambini di 7 anni.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "dev:server": "node server/server.mjs",
+    "build": "tsc --noEmit && vite build",
+    "start": "node server/server.mjs",
+    "preview": "vite preview --host",
+    "cap:sync": "npm run build && npx cap sync",
+    "cap:android": "npm run build && npx cap sync android && npx cap open android",
+    "cap:ios": "npm run build && npx cap sync ios && npx cap open ios"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/cli": "^8.6.0",
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/ios": "^8.6.0",
+    "@fontsource/baloo-2": "^5.2.5",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

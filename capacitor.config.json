@@ -1,0 +1,12 @@
+{
+  "appId": "it.ulygame.isola",
+  "appName": "L'Isola di Uly",
+  "webDir": "dist",
+  "backgroundColor": "#4fb4ff",
+  "android": {
+    "allowMixedContent": false
+  },
+  "ios": {
+    "contentInset": "always"
+  }
+}
