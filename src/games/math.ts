@@ -117,19 +117,64 @@ export const addsub: Gen = (level, rng) => {
     a = rng.int(6, 15);
     b = plus ? rng.int(2, 20 - a) : rng.int(2, a - 1);
   } else if (level === 4) {
+    // fino a 100 senza riporto
     plus = rng.chance(0.5);
-    const tens = rng.int(2, 8) * 10;
-    a = tens + rng.int(0, 5);
-    b = rng.chance(0.5) ? rng.int(1, 9 - (a % 10)) : rng.int(1, 2) * 10;
-    if (!plus) {
-      b = rng.chance(0.5) ? rng.int(1, a % 10 || 1) : 10 * rng.int(1, Math.floor(a / 10) - 1);
-      if (b > a) b = a - 1;
+    const kind = rng.int(0, 2);
+    if (kind === 0) {
+      // decine con decine: 30 + 40, 100 - 60
+      if (plus) {
+        a = 10 * rng.int(1, 9);
+        b = 10 * rng.int(1, 10 - a / 10);
+      } else {
+        a = 10 * rng.int(2, 10);
+        b = 10 * rng.int(1, a / 10 - 1);
+      }
+    } else if (kind === 1) {
+      // due cifre e una cifra: 43 + 5, 47 - 3
+      const t = rng.int(1, 9);
+      const u = plus ? rng.int(0, 8) : rng.int(1, 9);
+      a = 10 * t + u;
+      b = plus ? rng.int(1, 9 - u) : rng.int(1, u);
+    } else {
+      // due cifre e decine/due cifre senza riporto: 34 + 25, 78 - 43
+      const ta = rng.int(1, 8);
+      const ua = rng.int(0, 8);
+      a = 10 * ta + ua;
+      if (plus) b = 10 * rng.int(1, 9 - ta) + rng.int(0, 9 - ua);
+      else b = 10 * rng.int(0, ta - 1) + rng.int(0, ua);
+      if (b === 0) b = plus ? 10 : 1;
+      if (!plus && b > a) b = a - 1;
     }
-    if (plus && a + b > 99) b = 99 - a;
   } else {
-    plus = rng.chance(0.55);
-    a = rng.int(18, 67);
-    b = plus ? rng.int(5, Math.min(29, 99 - a)) : rng.int(5, a - 9);
+    // fino a 100 con riporto e prestito
+    const kind = rng.int(0, 3);
+    if (kind === 0) {
+      plus = true;
+      const ua = rng.int(2, 9);
+      const ub = rng.int(10 - ua, 9);
+      const ta = rng.int(1, 7);
+      const tb = rng.int(0, 8 - ta);
+      a = 10 * ta + ua;
+      b = 10 * tb + ub;
+    } else if (kind === 1) {
+      plus = false;
+      const ua = rng.int(0, 7);
+      const ub = rng.int(ua + 1, 9);
+      const ta = rng.int(2, 9);
+      const tb = rng.int(0, ta - 1);
+      a = 10 * ta + ua;
+      b = 10 * tb + ub;
+    } else if (kind === 2) {
+      // complementi a 100: 45 + 55
+      plus = true;
+      a = rng.int(11, 89);
+      b = 100 - a;
+    } else {
+      // partire da 100: 100 - 35
+      plus = false;
+      a = 100;
+      b = rng.int(11, 89);
+    }
   }
   const res = plus ? a + b : a - b;
   const missing = level >= 3 && rng.chance(0.3);
@@ -142,7 +187,7 @@ export const addsub: Gen = (level, rng) => {
       text: `Quale numero manca?`,
       say: `${a} ${plus ? 'più' : 'meno'} quale numero fa ${res}?`,
       visual: () => exprVisual(a, op, '?', res),
-      choices: numChoices(b, rng, 4, 3, 0),
+      choices: numChoices(b, rng, 4, level >= 4 ? 10 : 3, 0),
       answer: String(b),
       hint: plus ? `Parti da ${a} e conta fino a ${res}.` : `Da ${a} quanto devo togliere per arrivare a ${res}?`,
       explain: `${a} ${op} ${b} = ${res}`,
@@ -271,13 +316,13 @@ export const word: Gen = (level, rng) => {
   while (n2 === n1) n2 = rng.pick(names);
   const it = rng.pick(ITEMS);
   const qn = (it.f ? 'Quante ' : 'Quanti ') + it.name;
-  const max = level <= 1 ? 10 : level === 2 ? 15 : level === 3 ? 20 : 50;
+  const max = level <= 1 ? 10 : level === 2 ? 15 : level === 3 ? 20 : 100;
   let text: string, ans: number, hint: string;
   const kind = level >= 4 ? rng.int(0, 3) : level >= 2 ? rng.int(0, 1) : 0;
   let visualN = 0;
   if (kind === 0) {
     const a = rng.int(1, max - 2);
-    const b = rng.int(1, Math.min(9, max - a));
+    const b = rng.int(1, Math.min(level >= 4 ? 45 : 9, max - a));
     ans = a + b;
     visualN = a <= 10 && b <= 10 ? a : 0;
     text = `${n1} ha ${a} ${it.name}. Ne trova ${it.f ? 'altre' : 'altri'} ${b}. ${qn} ha adesso?`;
@@ -295,7 +340,7 @@ export const word: Gen = (level, rng) => {
     text = `Ci sono ${a} nidi. In ogni nido ci sono ${b} uova. Quante uova in tutto?`;
     hint = `Conta di ${b} in ${b} per ogni nido!`;
   } else {
-    const a = rng.int(12, 40);
+    const a = rng.int(12, level >= 5 ? 99 : 40);
     const b = rng.int(3, a - 4);
     ans = a - b;
     text = `${n1} ha ${a} ${it.name}, ${n2} ne ha ${b}. ${qn} ha ${n1} in più?`;

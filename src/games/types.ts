@@ -52,3 +52,14 @@ export const SKILL_INFO: Record<SkillId, { name: string; area: 'Matematica' | 'L
 
 /** Abilità con risposta multipla: usate nelle sfide a tempo. */
 export const MC_SKILLS: SkillId[] = ['count', 'addsub', 'mult', 'compare', 'word', 'shapes', 'balance', 'sequence', 'oddone'];
+
+/** Cosa significa ogni livello (per l'area genitori). */
+export const LEVEL_LABELS: Partial<Record<SkillId, string[]>> = {
+  count: ['fino a 10', 'fino a 20', 'decine fino a 50', 'decine fino a 99', 'decine e unità'],
+  addsub: ['+ entro 10', '+ e − entro 10', 'entro 20', 'fino a 100 senza riporto', 'fino a 100 con riporto'],
+  mult: ['×2 piccole', '×2 e ×10', '×5 e ×2', '×2, ×5, ×10', '×3, ×4, ×5'],
+  compare: ['entro 10', 'entro 20', 'simboli < > = entro 50', 'il più grande fino a 99', 'confronto con operazioni'],
+  word: ['entro 10', 'entro 15', 'entro 20', 'fino a 100 e moltiplicazioni', 'fino a 100 e differenze'],
+  mining: ['puntini', 'somme entro 10', 'entro 20', 'pari e dispari', 'decine fino a 100'],
+  balance: ['entro 10', 'sottrazione entro 10', 'entro 20', 'entro 50', 'con le tabelline'],
+};

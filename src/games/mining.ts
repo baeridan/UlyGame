@@ -43,7 +43,7 @@ export const mining: Gen = (level, rng) => {
       cells.push({ label: String(v), value: String(v), good: (v % 2 === 0) === even });
     }
   } else {
-    const T = level === 2 ? rng.int(6, 10) : level === 3 ? rng.int(11, 20) : rng.pick([10, 20, 30, 40, 50, 60]);
+    const T = level === 2 ? rng.int(6, 10) : level === 3 ? rng.int(11, 20) : rng.pick([30, 40, 50, 60, 70, 80, 90, 100]);
     title = `Scava i blocchi che fanno ${T} ⛏️`;
     say = `Scava solo i blocchi che fanno ${T}!`;
     const expr = (v: number, allowMinus: boolean): string => {
@@ -77,7 +77,7 @@ export const mining: Gen = (level, rng) => {
     while (cells.length < total) {
       const off = level === 5 ? rng.pick([-10, 10, -1, 1, 5]) : rng.pick([-2, -1, 1, 2, 3]);
       const v = Math.max(1, T + off);
-      if (v === T) continue;
+      if (v === T || v > 100) continue;
       let e = expr(v, level >= 3);
       if (used.has(e)) continue;
       used.add(e);

@@ -4,7 +4,7 @@ import { levelOf, record } from '../core/adaptive';
 import { makeRng } from '../core/rng';
 import { GENERATORS } from '../games';
 import type { Result, SkillId } from '../games/types';
-import { BOSS_SKILLS, ZONES } from '../zones';
+import { BOSS_MIN, BOSS_SKILLS, ZONES } from '../zones';
 import { brickBtn, brickCounter, confirmBox, modal, modelView, stars, type ModelView } from '../ui';
 import { dinoById } from '../art/dinos';
 import { GLITCH, GLITCH_FRIEND } from '../art/characters';
@@ -25,6 +25,7 @@ interface RunOpts {
   sideExtra?: HTMLElement;
   sideLabel: string;
   boss?: boolean;
+  minLevel?: Partial<Record<SkillId, number>>;
   onExit: () => void;
   onEnd: (firstTries: number, total: number, bricks: number) => void;
 }
@@ -59,7 +60,7 @@ function runner(o: RunOpts) {
   const next = () => {
     if (idx >= queue.length) return end();
     const skill = queue[idx];
-    const ch = GENERATORS[skill](levelOf(skill), rng);
+    const ch = GENERATORS[skill](levelOf(skill, o.minLevel?.[skill] ?? 1), rng);
     host.replaceChildren();
     const inner = h('div', { class: 'challenge-slot' });
     host.append(inner);
@@ -119,6 +120,7 @@ export function runMission(zi: number, mi: number) {
     title: `${z.emoji} ${z.missions[mi]}`,
     skills,
     side: () => modelView(d.model, 240, 190, { count: 0 }),
+    minLevel: z.minLevel,
     sideLabel: `Costruisci ${d.nick}!`,
     onExit: () => showZone(zi),
     onEnd: (first, total, bricks) => {
@@ -160,6 +162,7 @@ export function showBoss() {
       title: '🏰 Sfida a Glitch',
       skills,
       sideExtra: hp,
+      minLevel: BOSS_MIN,
       side: () => {
         const v = modelView(GLITCH, 220, 220, { jitter: true });
         gv = v;

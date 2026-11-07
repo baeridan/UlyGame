@@ -28,6 +28,9 @@ Nel finale Glitch confessa che faceva dispetti perché nessuno giocava con lui, 
 ## 🎮 Cosa c'è nel gioco
 
 - **14 tipi di sfide** (matematica e logica), ognuna con **5 livelli**. La difficoltà si adatta da sola: sale dopo 3 risposte giuste di fila e scende dopo 2 errori di fila.
+- **Addizioni e sottrazioni fino a 100**: entro 10 e 20 nei primi livelli, poi fino a 100 senza riporto (30 + 40, 43 + 25) e con riporto e prestito (38 + 27, 64 − 29, 45 + 55, 100 − 35).
+- Dalla Miniera in poi le zone alzano il livello minimo: sulle Vette Ghiacciate e contro Glitch addizioni e problemi arrivano sempre fino a 100.
+- Nell'area genitori si può scegliere il **livello di partenza** di ogni abilità (per esempio "Addizioni: fino a 100 con riporto").
 - **Nessuna punizione**: al primo errore arriva un aiuto, al secondo il gioco mostra la soluzione con calma.
 - **Voce in italiano** che legge domande e storia (sintesi vocale del dispositivo), con un pulsante 🔊 per riascoltare.
 - **Laboratorio del Costruttore**: con i mattoncini guadagnati si costruiscono i dinosauri, che si montano mattoncino per mattoncino.

@@ -14,6 +14,8 @@ export interface Zone {
   missions: string[];
   ground: B;
   sky: [string, string];
+  /** livello minimo delle sfide in questa zona (la storia diventa più impegnativa) */
+  minLevel?: Partial<Record<SkillId, number>>;
 }
 
 export const ZONES: Zone[] = [
@@ -68,6 +70,7 @@ export const ZONES: Zone[] = [
     missions: ['Il primo piccone', 'Diamanti nascosti', 'Le torri di decine'],
     ground: B.Stone,
     sky: ['#3d3a5c', '#8c7fb8'],
+    minLevel: { count: 3, mining: 3, crafting: 2 },
   },
   {
     id: 4,
@@ -81,6 +84,7 @@ export const ZONES: Zone[] = [
     missions: ['La bilancia di lava', 'Il sentiero sicuro', 'Le rocce in fila'],
     ground: B.Obsidian,
     sky: ['#ff9a5c', '#ffe0b2'],
+    minLevel: { balance: 3, mult: 3, maze: 3 },
   },
   {
     id: 5,
@@ -94,7 +98,10 @@ export const ZONES: Zone[] = [
     missions: ['Il sudoku di ghiaccio', 'La valanga di problemi', 'La cima dei numeri'],
     ground: B.Snow,
     sky: ['#9fd8ff', '#ffffff'],
+    minLevel: { addsub: 4, word: 4, sudoku: 3 },
   },
 ];
 
 export const BOSS_SKILLS: SkillId[] = ['addsub', 'sequence', 'compare', 'balance', 'oddone', 'mult', 'word', 'shapes', 'count', 'addsub'];
+
+export const BOSS_MIN: Partial<Record<SkillId, number>> = { addsub: 4, word: 4, compare: 4, count: 3, mult: 3, balance: 3 };

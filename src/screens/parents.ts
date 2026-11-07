@@ -1,7 +1,7 @@
 import { beginScreen, h } from '../core/dom';
 import { save, persist, exportSave, importSave, today, current, type Profile } from '../core/store';
 import { brickBtn, modelView, topBar } from '../ui';
-import { SKILL_INFO, type SkillId } from '../games/types';
+import { SKILL_INFO, LEVEL_LABELS, type SkillId } from '../games/types';
 import { showTitle } from './title';
 import { applyVolumes, sfx } from '../core/audio';
 import { toast } from '../core/fx';
@@ -37,6 +37,23 @@ function pct(p: Profile, s: SkillId) {
   return Math.round((st.correct / st.attempts) * 100);
 }
 
+/** Selettore del livello: il genitore può far partire il bambino da un livello più alto. */
+function levelSelect(p: Profile, k: SkillId, lvl: number) {
+  const labels = LEVEL_LABELS[k];
+  const sel = h(
+    'select',
+    { class: 'stat-lvl', 'aria-label': `Livello di ${SKILL_INFO[k].name}` },
+    ...[1, 2, 3, 4, 5].map((n) => h('option', { value: String(n), selected: n === lvl }, labels ? `${n} · ${labels[n - 1]}` : `Livello ${n}`))
+  ) as HTMLSelectElement;
+  sel.addEventListener('change', () => {
+    const cur = p.skills[k] || { level: 1, streak: 0, wrongStreak: 0, attempts: 0, correct: 0 };
+    p.skills[k] = { ...cur, level: Number(sel.value), streak: 0, wrongStreak: 0 };
+    persist();
+    toast(`${p.name}: ${SKILL_INFO[k].name} al livello ${sel.value}`);
+  });
+  return sel;
+}
+
 function fmtMin(sec: number) {
   return `${Math.round(sec / 60)} min`;
 }
@@ -56,7 +73,7 @@ export function showParents() {
         h('span', { class: 'stat-name' }, `${SKILL_INFO[k].icon} ${SKILL_INFO[k].name}`),
         h('span', { class: 'stat-bar' }, h('i', { style: `width:${v ?? 0}%;background:${v === null ? '#ccc' : v >= 75 ? '#43a047' : v >= 50 ? '#fdd835' : '#fb8c00'}` })),
         h('span', { class: 'stat-val' }, v === null ? '—' : `${v}%`),
-        h('span', { class: 'stat-lvl' }, lvl ? `Liv. ${lvl}` : '')
+        levelSelect(p, k, lvl || 1)
       );
     });
     const tried = (Object.keys(SKILL_INFO) as SkillId[]).filter((k) => (p.skills[k]?.attempts || 0) >= 4);
@@ -77,6 +94,7 @@ export function showParents() {
         week.length ? h('p', { class: 'muted' }, 'Ultimi giorni: ' + week.map((d) => `${d.date.slice(5)} ${fmtMin(d.seconds)}`).join(' · ')) : null,
         strong.length ? h('p', {}, '💪 Punti forti: ' + strong.map((k) => SKILL_INFO[k].name).join(', ')) : null,
         weak.length ? h('p', {}, '🎯 Da allenare: ' + weak.map((k) => SKILL_INFO[k].name).join(', ')) : null,
+        h('p', { class: 'muted' }, 'Puoi scegliere il livello di ogni abilità: il gioco parte da lì e lo abbassa solo se servono più esercizi facili.'),
         h('div', { class: 'stat-list' }, ...rows),
         h('p', { class: 'muted' }, 'Missioni per zona: ' + ZONES.map((z) => `${z.short} ${p.zoneProgress[z.id]}/3`).join(' · '))
       )
