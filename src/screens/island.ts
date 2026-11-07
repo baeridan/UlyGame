@@ -111,7 +111,7 @@ export interface RenderInfo {
 /** Disegna l'isola. done[z] = zona liberata (colori pieni), towerBuilt = torre ricostruita. */
 export function drawIsland(ctx: CanvasRenderingContext2D, W: number, H: number, done: boolean[], towerBuilt: boolean): RenderInfo {
   const cols = island();
-  const s = Math.max(6, Math.floor(Math.min(W / (N * 2 - 4), H / (N + 9))));
+  const s = Math.max(6, Math.floor(Math.min(W / (N * 2 - (W < 600 ? 8 : 4)), H / (N + 9))));
   const ox = W / 2;
   const oy = (H - (N * s + 6 * s)) / 2 + 6 * s;
   ctx.clearRect(0, 0, W, H);

@@ -30,7 +30,7 @@ document.addEventListener(
   { passive: false }
 );
 
-if ('serviceWorker' in navigator && location.protocol === 'https:') {
+if (!import.meta.env.VITE_SINGLE && 'serviceWorker' in navigator && location.protocol === 'https:') {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
 

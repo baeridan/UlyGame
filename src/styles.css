@@ -96,8 +96,7 @@ h3 {
 #app {
   position: relative;
   z-index: 1;
-  height: 100vh;
-  height: 100dvh;
+  height: 100%;
 }
 
 .screen {
@@ -669,7 +668,7 @@ h3 {
   flex-direction: column;
   align-items: center;
   gap: clamp(8px, 1.6vh, 16px);
-  justify-content: center;
+  justify-content: safe center;
   animation: screenIn 0.3s ease-out;
   overflow: auto;
 }
@@ -907,8 +906,8 @@ h3 {
 
 /* miniera */
 .mining-ch { background: linear-gradient(180deg, #fff, #ece7f6); }
-.mine-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(6px, 1.4vw, 14px); width: 100%; max-width: 640px; }
-.mine-grid.n9 { grid-template-columns: repeat(3, 1fr); max-width: 480px; }
+.mine-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(6px, 1.4vw, 14px); width: 100%; max-width: 640px; }
+.mine-grid.n9 { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 480px; }
 .mine-block {
   position: relative;
   border: none;
@@ -1268,3 +1267,37 @@ h3 {
 
 .towers { width: auto; height: clamp(150px, 26vh, 230px) !important; }
 .maze-dino { transform: translate(calc(var(--x) * var(--cs)), calc(var(--y) * var(--cs))) scale(1.25); }
+
+/* ---------- cellulari ---------- */
+@media (max-width: 600px) {
+  .screen { padding-left: max(8px, env(safe-area-inset-left, 0px)); padding-right: max(8px, env(safe-area-inset-right, 0px)); }
+  .mission-layout { gap: 8px; }
+  .mission-side { padding: 2px 10px; max-height: 92px; gap: 6px; border-radius: 16px; }
+  .mission-side canvas { width: 110px !important; height: 86px !important; }
+  .side-label { font-size: 1rem; }
+  .challenge { border-radius: 18px; padding: 10px; }
+  .choice { min-height: 58px; }
+  .zone-marker { min-width: 0; padding: 2px 6px 3px; border-radius: 10px; box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2), 0 0 0 3px var(--zc); }
+  .zone-marker.current { box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2), 0 0 0 3px var(--gold), 0 0 14px 4px rgba(255, 213, 79, 0.8); }
+  .zm-emoji { font-size: 1.1rem; }
+  .zm-name { font-size: 0.62rem; }
+  .zm-prog i { width: 8px; height: 6px; }
+  .zone-marker::after { border-width: 6px; bottom: -9px; }
+  .map-dino { width: 44px; }
+  .map-glitch { width: 32px; }
+  .topbar-title { font-size: 1.1rem; min-width: 0; }
+  .mission-progress { gap: 3px; }
+  .mp-stud { width: 14px; height: 10px; }
+  .pill { font-size: 1rem; padding: 2px 10px; }
+  .btn.round { width: 46px; height: 46px; font-size: 1.25rem; }
+  .craft-slot { width: 54px; height: 54px; }
+  .craft-table { grid-template-columns: repeat(3, 54px); }
+  .craft-result { width: 70px; height: 70px; font-size: 2.4rem; }
+  .arrow-pad { grid-template-columns: repeat(3, 64px); }
+  .btn.arrow { height: 58px; }
+  .dlg-text { font-size: 1.1rem; }
+  .dlg-bubble { min-height: 110px; padding: 10px 12px 12px; }
+  .dlg-box { flex-wrap: wrap; }
+  .dino-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .dino-thumb { width: 100%; height: auto; }
+}
