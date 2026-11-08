@@ -51,6 +51,26 @@ export const GLITCH_FRIEND: Model = {
   colors: { P: '#8e24aa', Q: '#ea80fc', W: '#ffffff', K: '#1a0026' },
 };
 
+/** Capitan Scompiglio, il pappagallo pirata di mattoncini */
+export const SCOMPIGLIO: Model = {
+  rows: [
+    '...KKKKK...',
+    '..KKKWKKK..',
+    '.KKKKKKKKK.',
+    '...RRRRR...',
+    '..RReRRKKY.',
+    '..RRRRRRYY.',
+    '...RRRRR...',
+    '..GGRRRGG..',
+    '.GGGRRRGGG.',
+    '.GGBBBBBGG.',
+    '..GBBBBBG..',
+    '...Y...Y...',
+    '..YY..YY...',
+  ],
+  colors: { R: '#e53935', G: '#43a047', B: '#1e88e5', Y: '#fdd835', K: '#212121', W: '#ffffff' },
+};
+
 export const SKINS = ['#ffcc80', '#e0a96d', '#a1665e', '#6d4c41', '#ffe082'];
 export const HAIRS = ['#3e2723', '#8d6e63', '#fdd835', '#e65100', '#212121', '#b0bec5'];
 export const CLOTHES = ['#e53935', '#1e88e5', '#43a047', '#fdd835', '#fb8c00', '#8e24aa', '#00acc1', '#f06292'];

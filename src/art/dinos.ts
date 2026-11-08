@@ -1,14 +1,14 @@
 import type { Model } from './bricks';
 import { shade } from './color';
 
-export type DinoId = 'trice' | 'stego' | 'ptero' | 'ankylo' | 'trex' | 'brachio' | 'raptor' | 'spino' | 'parasaur';
+export type DinoId = 'trice' | 'stego' | 'ptero' | 'ankylo' | 'trex' | 'brachio' | 'raptor' | 'spino' | 'parasaur' | 'mosa' | 'pachy' | 'diplo';
 
 export interface DinoDef {
   id: DinoId;
   name: string;
   nick: string;
   cost: number;
-  /** zona da completare per poterlo costruire; -1 = dopo il castello */
+  /** zona da completare per poterlo costruire; -1 = dopo Glitch, -2 = dopo Capitan Scompiglio */
   unlockZone: number;
   facts: string[];
   model: Model;
@@ -230,8 +230,8 @@ export const DINOS: DinoDef[] = [
     id: 'spino',
     name: 'Spinosauro',
     nick: 'Spino',
-    cost: 120,
-    unlockZone: 6,
+    cost: 150,
+    unlockZone: 10,
     facts: [
       'Lo Spinosauro aveva una grande vela sulla schiena.',
       'Lo Spinosauro sapeva nuotare e mangiava pesci giganti.',
@@ -259,8 +259,8 @@ export const DINOS: DinoDef[] = [
     id: 'parasaur',
     name: 'Parasaurolofo',
     nick: 'Paro',
-    cost: 140,
-    unlockZone: 6,
+    cost: 130,
+    unlockZone: 9,
     facts: [
       'Il Parasaurolofo aveva una cresta a forma di tubo sulla testa.',
       'Con la cresta il Parasaurolofo faceva suoni come una tromba!',
@@ -285,6 +285,95 @@ export const DINOS: DinoDef[] = [
       '#fb8c00'
     ),
   },
+  {
+    id: 'mosa',
+    name: 'Mosasauro',
+    nick: 'Mosa',
+    cost: 110,
+    unlockZone: 7,
+    facts: [
+      'Il Mosasauro viveva nel mare ed era un rettile gigante, non un dinosauro.',
+      'Il Mosasauro aveva pinne al posto delle zampe.',
+      'Il Mosasauro poteva essere lungo come un autobus!',
+    ],
+    model: m(
+      [
+        '..............AAA.',
+        'C...........AAAAeA',
+        'CC.....AAAAAAAAWWW',
+        '.CAAAAAAAAAAAAAAA.',
+        '..AAAABBBBBBBBB...',
+        '....C.....C.......',
+      ],
+      '#00897b',
+      '#b2dfdb',
+      '#004d40'
+    ),
+  },
+  {
+    id: 'pachy',
+    name: 'Pachicefalosauro',
+    nick: 'Pachy',
+    cost: 120,
+    unlockZone: 8,
+    facts: [
+      'Il Pachicefalosauro aveva una testa a cupola, dura come un casco!',
+      'Il tetto della testa del Pachicefalosauro era spesso come un dizionario.',
+      'Il Pachicefalosauro camminava su due zampe e mangiava piante.',
+    ],
+    model: m(
+      [
+        '..........CCC.',
+        '.........CCCCC',
+        '.........AAeAA',
+        'A.......AAAAA.',
+        'AA....AAAAAC..',
+        '.AAAAAAAAA.C..',
+        '..AAAAAABB....',
+        '...AAAAABB....',
+        '....DD..DD....',
+        '....DD..DD....',
+        '...WDD.WDD....',
+      ],
+      '#c0ca33',
+      '#f0f4c3',
+      '#6d4c41'
+    ),
+  },
+  {
+    id: 'diplo',
+    name: 'Diplodoco',
+    nick: 'Dippy',
+    cost: 160,
+    unlockZone: -2,
+    facts: [
+      'Il Diplodoco era lunghissimo: quanto tre autobus in fila!',
+      'La coda del Diplodoco era lunga e sottile, come una frusta.',
+      'Il Diplodoco mangiava foglie tutto il giorno per diventare così grande.',
+    ],
+    model: m(
+      [
+        '...................AAA',
+        '..................AAeA',
+        '..................AA..',
+        '.................AA...',
+        '................AA....',
+        '..........AAAAAAA.....',
+        'AAA.....AAAAAAAAAA....',
+        '..AAAAAAAAAAAAAAAA....',
+        '.......AABBBBBBAA.....',
+        '........DD....DD......',
+        '........DD....DD......',
+        '........DD....DD......',
+      ],
+      '#f06292',
+      '#f8bbd0',
+      '#ad1457'
+    ),
+  },
 ];
+
+// ordine del laboratorio: come si incontrano nella storia
+DINOS.sort((a, b) => (a.unlockZone < 0 ? 100 - a.unlockZone : a.unlockZone) - (b.unlockZone < 0 ? 100 - b.unlockZone : b.unlockZone));
 
 export const dinoById = (id: string) => DINOS.find((d) => d.id === id)!;

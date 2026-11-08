@@ -11,7 +11,8 @@ import { ZONES } from '../zones';
 
 export function dinoUnlocked(d: DinoDef) {
   const p = me();
-  if (d.unlockZone === 6) return p.bossDone;
+  if (d.unlockZone === -1) return p.bossDone;
+  if (d.unlockZone === -2) return p.boss2Done;
   return p.zoneProgress[d.unlockZone] >= 3;
 }
 
@@ -35,7 +36,7 @@ export function showLab() {
           }
           if (!unlocked) {
             sfx('wrong');
-            speak(d.unlockZone === 6 ? 'Questo dinosauro si sblocca dopo aver battuto Glitch!' : `Prima libera la zona ${ZONES[d.unlockZone].name}!`);
+            speak(d.unlockZone < 0 ? `Questo dinosauro si sblocca dopo aver battuto ${d.unlockZone === -1 ? 'Glitch' : 'Capitan Scompiglio'}!` : `Prima libera la zona ${ZONES[d.unlockZone].name}!`);
             return;
           }
           if (p.bricks < d.cost) {
@@ -52,7 +53,7 @@ export function showLab() {
       h(
         'div',
         { class: 'dino-cost' },
-        built ? '✔ Costruito' : unlocked ? h('span', {}, `${d.cost} `, h('span', { class: 'mini-brick' })) : d.unlockZone === 6 ? '🔒 Dopo Glitch' : `🔒 ${ZONES[d.unlockZone].short}`
+        built ? '✔ Costruito' : unlocked ? h('span', {}, `${d.cost} `, h('span', { class: 'mini-brick' })) : d.unlockZone < 0 ? (d.unlockZone === -1 ? '🔒 Dopo Glitch' : '🔒 Dopo il pirata') : `🔒 ${ZONES[d.unlockZone].short}`
       )
     );
     grid.append(card);

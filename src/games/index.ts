@@ -6,6 +6,9 @@ import { build } from './build';
 import { sudoku } from './sudoku';
 import { mining } from './mining';
 import { crafting } from './crafting';
+import { line100 } from './line100';
+import { coladd, colsub } from './column';
+import { tables } from './tables';
 
 export const GENERATORS: Record<SkillId, Gen> = {
   count,
@@ -22,4 +25,8 @@ export const GENERATORS: Record<SkillId, Gen> = {
   sudoku,
   mining,
   crafting,
+  line100,
+  coladd,
+  colsub,
+  tables,
 };

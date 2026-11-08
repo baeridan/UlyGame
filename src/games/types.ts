@@ -14,7 +14,11 @@ export type SkillId =
   | 'build'
   | 'sudoku'
   | 'mining'
-  | 'crafting';
+  | 'crafting'
+  | 'line100'
+  | 'coladd'
+  | 'colsub'
+  | 'tables';
 
 export type Result = 'first' | 'second' | 'fail';
 
@@ -48,6 +52,10 @@ export const SKILL_INFO: Record<SkillId, { name: string; area: 'Matematica' | 'L
   sudoku: { name: 'Dino-sudoku', area: 'Logica', icon: '🧩' },
   mining: { name: 'La miniera', area: 'Matematica', icon: '⛏️' },
   crafting: { name: 'Banco da lavoro', area: 'Logica', icon: '🛠️' },
+  line100: { name: 'Linea del 100', area: 'Matematica', icon: '📏' },
+  coladd: { name: 'Addizioni in colonna', area: 'Matematica', icon: '🧮' },
+  colsub: { name: 'Sottrazioni in colonna', area: 'Matematica', icon: '🧮' },
+  tables: { name: 'Tabelline', area: 'Matematica', icon: '✖️' },
 };
 
 /** Abilità con risposta multipla: usate nelle sfide a tempo. */
@@ -62,4 +70,8 @@ export const LEVEL_LABELS: Partial<Record<SkillId, string[]>> = {
   word: ['entro 10', 'entro 15', 'entro 20', 'fino a 100 e moltiplicazioni', 'fino a 100 e differenze'],
   mining: ['puntini', 'somme entro 10', 'entro 20', 'pari e dispari', 'decine fino a 100'],
   balance: ['entro 10', 'sottrazione entro 10', 'entro 20', 'entro 50', 'con le tabelline'],
+  line100: ['trova il numero', 'passi avanti e indietro', 'salti da 10', 'salti da 10 e passi da 1', 'quanto manca?'],
+  coladd: ['senza riporto (+ 1 cifra)', 'senza riporto', 'con riporto (+ 1 cifra)', 'con riporto', 'riporto da ricordare da solo'],
+  colsub: ['senza prestito (− 1 cifra)', 'senza prestito', 'con prestito (− 1 cifra)', 'con prestito', 'prestito da ricordare da solo'],
+  tables: ['×2 e ×10', '×5 e ×3', '×4 e ×6', '×7, ×8, ×9', 'tutte e fattore mancante'],
 };

@@ -29,6 +29,9 @@ export interface Profile {
   storySeen: string[];
   dinosBuilt: string[];
   bossDone: boolean;
+  boss2Done: boolean;
+  /** isola mostrata sulla mappa (1 o 2) */
+  lastAct: 1 | 2;
   skills: Partial<Record<SkillId, SkillStat>>;
   /** cantiere: colonne 8x8, ognuna lista di tipi di blocco */
   sandbox: number[][];
@@ -56,6 +59,14 @@ export interface Save {
 }
 
 const KEY = 'ulygame-save-v1';
+/** zone totali (6 nella prima isola + 5 nell'Isola Lontana) */
+export const ZONE_COUNT = 11;
+
+const pad = (a: unknown, n: number) => {
+  const arr = Array.isArray(a) ? a.map((x) => Number(x) || 0) : [];
+  while (arr.length < n) arr.push(0);
+  return arr;
+};
 
 const defaultSettings = (): Settings => ({
   music: 0.4,
@@ -76,11 +87,13 @@ export function newProfile(name: string, avatar: Avatar): Profile {
     avatar,
     bricks: 0,
     totalBricks: 0,
-    zoneProgress: [0, 0, 0, 0, 0, 0],
-    stars: Array(18).fill(0),
+    zoneProgress: Array(ZONE_COUNT).fill(0),
+    stars: Array(ZONE_COUNT * 3).fill(0),
     storySeen: [],
     dinosBuilt: [],
     bossDone: false,
+    boss2Done: false,
+    lastAct: 1,
     skills: {},
     sandbox: Array.from({ length: 64 }, () => []),
     ores: 0,
@@ -109,7 +122,10 @@ function normalize(s: Partial<Save>): Save {
   };
   out.profiles = out.profiles.slice(0, 4).map((p) => {
     const base = newProfile(String(p.name || 'Uly'), p.avatar || { skin: 0, hair: 0, shirt: 0, pants: 0, hat: 0 });
-    return { ...base, ...p, id: p.id || base.id };
+    const out = { ...base, ...p, id: p.id || base.id };
+    out.zoneProgress = pad(out.zoneProgress, ZONE_COUNT);
+    out.stars = pad(out.stars, ZONE_COUNT * 3);
+    return out;
   });
   return out;
 }

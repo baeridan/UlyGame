@@ -335,7 +335,7 @@ export const word: Gen = (level, rng) => {
     hint = 'Ne regala: quindi diminuiscono! È una sottrazione.';
   } else if (kind === 2) {
     const a = rng.int(2, 5);
-    const b = rng.pick([2, 5, 10]);
+    const b = level >= 5 ? rng.int(3, 9) : rng.pick([2, 5, 10]);
     ans = a * b;
     text = `Ci sono ${a} nidi. In ogni nido ci sono ${b} uova. Quante uova in tutto?`;
     hint = `Conta di ${b} in ${b} per ogni nido!`;

@@ -4,10 +4,10 @@ import { levelOf, record } from '../core/adaptive';
 import { makeRng } from '../core/rng';
 import { GENERATORS } from '../games';
 import type { Result, SkillId } from '../games/types';
-import { BOSS_MIN, BOSS_SKILLS, ZONES } from '../zones';
+import { BOSS_MIN, BOSS_SKILLS, BOSS2_MIN, BOSS2_SKILLS, ZONES } from '../zones';
 import { brickBtn, brickCounter, confirmBox, modal, modelView, stars, type ModelView } from '../ui';
 import { dinoById } from '../art/dinos';
-import { GLITCH, GLITCH_FRIEND } from '../art/characters';
+import { GLITCH, GLITCH_FRIEND, SCOMPIGLIO, avatarModel } from '../art/characters';
 import { sfx } from '../core/audio';
 import { speak, stopSpeech } from '../core/speech';
 import { confetti, floatText } from '../core/fx';
@@ -76,7 +76,7 @@ function runner(o: RunOpts) {
       floatText(`+${gain} 🧱`, counter);
       if (o.boss && r === 'fail' && queue.length < 16) {
         // contro Glitch una risposta sbagliata non conta: arriva un'altra domanda
-        queue.push(rng.pick(BOSS_SKILLS));
+        queue.push(rng.pick(o.skills));
         progress.append(h('span', { class: 'mp-stud' }));
         speak('Glitch ha parato il colpo! Ancora una domanda.');
       } else {
@@ -114,13 +114,19 @@ export function runMission(zi: number, mi: number) {
   // 6 sfide: due per ogni abilità della zona, la principale della missione prima
   const main = z.skills[mi];
   const others = z.skills.filter((s) => s !== main);
-  const skills: SkillId[] = [main, ...shuffle([main, ...others, ...others], rng).slice(0, 5)];
+  // nella seconda isola l'abilità principale è metà della missione
+  const skills: SkillId[] = z.primary
+    ? shuffle([z.primary, z.primary, z.primary, ...shuffle(z.skills.filter((x) => x !== z.primary).flatMap((x) => [x, x]), rng).slice(0, 3)], rng)
+    : [main, ...shuffle([main, ...others, ...others], rng).slice(0, 5)];
+  // livelli minimi: quelli della zona più quelli della missione (crescono missione dopo missione)
+  const minLevel: Partial<Record<SkillId, number>> = { ...(z.minLevel || {}) };
+  for (const [k, v] of Object.entries(z.missionMin?.[mi] || {})) minLevel[k as SkillId] = Math.max(minLevel[k as SkillId] || 1, v!);
   const d = dinoById(z.dino);
   runner({
     title: `${z.emoji} ${z.missions[mi]}`,
     skills,
     side: () => modelView(d.model, 240, 190, { count: 0 }),
-    minLevel: z.minLevel,
+    minLevel,
     sideLabel: `Costruisci ${d.nick}!`,
     onExit: () => showZone(zi),
     onEnd: (first, total, bricks) => {
@@ -143,7 +149,7 @@ export function runMission(zi: number, mi: number) {
           h('div', { class: 'result-bricks' }, `+${bricks} `, h('span', { class: 'mini-brick' })),
           brickBtn('Continua ▶', () => {
             m.close();
-            if (justFreed) showMap(() => playStory(`outro-${zi}`, () => showCrystalModal(zi, () => showMap())));
+            if (justFreed) showMap(() => playStory(`outro-${zi}`, () => showCrystalModal(zi, () => showMap(undefined, z.act))), z.act);
             else showZone(zi);
           }, 'green', 'big')
         )
@@ -152,40 +158,45 @@ export function runMission(zi: number, mi: number) {
   });
 }
 
-export function showBoss() {
+export function showBoss(act: 1 | 2 = 1) {
   const p = me();
-  playStory('intro-boss', () => {
-    const skills = BOSS_SKILLS.slice();
-    const hp = h('div', { class: 'boss-hp' });
+  const cfg =
+    act === 1
+      ? { intro: 'intro-boss', outro: 'outro-boss', skills: BOSS_SKILLS, min: BOSS_MIN, model: GLITCH, friend: GLITCH_FRIEND, title: '🏰 Sfida a Glitch', label: 'Glitch', jitter: true, win: '🏆 Hai battuto Glitch!', winText: 'La Grande Torre dei Numeri è di nuovo in piedi!', say: 'Hai battuto Glitch! Che campione!' }
+      : { intro: 'intro-boss2', outro: 'outro-boss2', skills: BOSS2_SKILLS, min: BOSS2_MIN, model: SCOMPIGLIO, friend: SCOMPIGLIO, title: '🏴\u200d☠️ La nave di Scompiglio', label: 'Capitan Scompiglio', jitter: false, win: "🏆 Hai salvato l'ultimo Uovo d'Oro!", winText: 'Il Faro del Cento è di nuovo acceso!', say: 'Hai battuto Capitan Scompiglio! Sei fortissimo!' };
+  playStory(cfg.intro, () => {
+    const skills = cfg.skills.slice();
+    const hp = h('div', { class: `boss-hp ${act === 2 ? 'pirate' : ''}` });
     let gv: ModelView | null = null;
     runner({
-      title: '🏰 Sfida a Glitch',
+      title: cfg.title,
       skills,
       sideExtra: hp,
-      minLevel: BOSS_MIN,
+      minLevel: cfg.min,
       side: () => {
-        const v = modelView(GLITCH, 220, 220, { jitter: true });
+        const v = modelView(cfg.model, 220, 220, { jitter: cfg.jitter });
         gv = v;
         return {
           el: v.el,
           total: skills.length,
           setCount(n: number) {
-            // la barra di energia di Glitch scende a ogni risposta giusta
+            // la barra di energia del cattivo scende a ogni risposta giusta
             hp.style.setProperty('--hp', String(Math.max(0, 1 - n / skills.length)));
             v.jump();
-            sfx('glitch');
+            sfx(act === 1 ? 'glitch' : 'whoosh');
           },
           jump: () => v.jump(),
           setModel: (m) => v.setModel(m),
         };
       },
-      sideLabel: 'Glitch',
+      sideLabel: cfg.label,
       boss: true,
-      onExit: () => showMap(),
+      onExit: () => showMap(undefined, act),
       onEnd: (_first, _total, bricks) => {
-        gv?.setModel(GLITCH_FRIEND);
-        const firstTime = !p.bossDone;
-        p.bossDone = true;
+        gv?.setModel(cfg.friend);
+        const firstTime = act === 1 ? !p.bossDone : !p.boss2Done;
+        if (act === 1) p.bossDone = true;
+        else p.boss2Done = true;
         p.bricks += 50;
         p.totalBricks += 50;
         persist();
@@ -193,20 +204,50 @@ export function showBoss() {
           h(
             'div',
             { class: 'col center result-modal' },
-            h('h2', {}, '🏆 Hai battuto Glitch!'),
-            h('p', { class: 'big-text' }, 'La Grande Torre dei Numeri è di nuovo in piedi!'),
+            h('h2', {}, cfg.win),
+            h('p', { class: 'big-text' }, cfg.winText),
             h('div', { class: 'result-bricks' }, `+${bricks + 50} `, h('span', { class: 'mini-brick' })),
             brickBtn('Continua ▶', () => {
               m.close();
-              if (firstTime) showMap(() => playStory('outro-boss', () => {}));
-              else showMap();
+              if (!firstTime) return showMap(undefined, act);
+              if (act === 1) showMap(() => playStory(cfg.outro, () => {}), 1);
+              else showMap(() => playStory(cfg.outro, () => showDiploma()), 2);
             }, 'green', 'big')
           )
         );
-        speak('Hai battuto Glitch! Che campione!');
+        speak(cfg.say);
       },
     });
   });
+}
+
+/** Diploma finale: la seconda elementare dell'isola è completata. */
+export function showDiploma() {
+  const p = me();
+  const av = modelView(avatarModel(p.avatar), 120, 160);
+  const m = modal(
+    h(
+      'div',
+      { class: 'col center diploma' },
+      h('div', { class: 'diploma-ribbon' }, '🏅'),
+      h('h2', {}, 'Diploma di Super Costruttore'),
+      av.el,
+      h('p', { class: 'big-text' }, `${p.name} ha completato la seconda elementare dell'Isola dei Blocchi!`),
+      h(
+        'ul',
+        { class: 'diploma-list' },
+        h('li', {}, '🔢 Numeri fino a 100 e linea del 100'),
+        h('li', {}, '🧮 Addizioni con il riporto e sottrazioni con il prestito'),
+        h('li', {}, '✖️ Tutte le tabelline'),
+        h('li', {}, '🧩 Logica, forme, problemi e coding')
+      ),
+      h('p', { class: 'muted' }, 'Puoi continuare a giocare tutte le missioni per allenarti e collezionare i dinosauri.'),
+      brickBtn('Evviva! 🎉', () => m.close(), 'green', 'big')
+    )
+  );
+  sfx('win');
+  confetti(window.innerWidth / 2, window.innerHeight / 3, 90);
+  speak(`Complimenti ${p.name}! Diploma di Super Costruttore!`);
 }
 
 /** Modalità di prova: ?test=skill:livello mostra una singola sfida (utile per verifiche). */

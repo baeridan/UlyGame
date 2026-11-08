@@ -23,11 +23,26 @@ Nel finale Glitch confessa che faceva dispetti perché nessuno giocava con lui, 
 | ⛏️ Miniera di Cristallo | miniera dei numeri, banco da lavoro, torri da 10 | Anchilosauro |
 | 🌋 Vulcano Brontolone | bilancia (pre-algebra), coding con le frecce, tabelline | Tirannosauro |
 | 🏔️ Vette Ghiacciate | dino-sudoku 4×4, problemi, calcolo entro 100 | Brachiosauro |
-| 🏰 Castello di Glitch | sfida finale con tutto il programma | + Velociraptor, Spinosauro, Parasaurolofo |
+| 🏰 Castello di Glitch | sfida finale della prima isola | — |
+
+Dopo Glitch arriva Capitan Scompiglio, un pappagallo pirata che ha rubato le Uova d'Oro dei dinosauri:
+si parte per l'**Isola Lontana**, pensata per la seconda metà dell'anno.
+
+| Zona (Isola Lontana) | Cosa si impara | Dinosauro liberato |
+|---|---|---|
+| 🌉 Ponte del Cento | linea del 100 a gruppi di 5 rossi e 5 blu: trovare i numeri, passi da 1, salti da 10, quanto manca a 100 | Velociraptor |
+| ⚓ Porto del Riporto | addizioni in colonna: prima senza riporto, poi con il riporto (27 + 8, 38 + 45) | Mosasauro |
+| 🦇 Grotta del Prestito | sottrazioni in colonna: prima senza prestito, poi con il prestito (23 − 7, 23 − 17) | Pachicefalosauro |
+| 🌻 Giardino delle Tabelline | tabelline del 2, 10, 5, 3, 4 e 6 con salti sulla linea, schieramenti e tabelline da completare | Parasaurolofo |
+| ⚙️ Officina dei Numeri | tabelline del 7, 8 e 9, riporto e prestito da ricordare da soli | Spinosauro |
+| 🏴‍☠️ Nave di Scompiglio | sfida finale di tutto l'anno, poi il **Diploma di Super Costruttore** | Diplodoco |
+
+Nell'Isola Lontana ogni missione alza il livello minimo: per esempio al Porto la prima missione è senza riporto,
+la seconda introduce il riporto con l'aiuto passo passo, la terza lo chiede su numeri a due cifre.
 
 ## 🎮 Cosa c'è nel gioco
 
-- **14 tipi di sfide** (matematica e logica), ognuna con **5 livelli**. La difficoltà si adatta da sola: sale dopo 3 risposte giuste di fila e scende dopo 2 errori di fila.
+- **18 tipi di sfide** (matematica e logica), ognuna con **5 livelli**. La difficoltà si adatta da sola: sale dopo 3 risposte giuste di fila e scende dopo 2 errori di fila.
 - **Addizioni e sottrazioni fino a 100**: entro 10 e 20 nei primi livelli, poi fino a 100 senza riporto (30 + 40, 43 + 25) e con riporto e prestito (38 + 27, 64 − 29, 45 + 55, 100 − 35).
 - Dalla Miniera in poi le zone alzano il livello minimo: sulle Vette Ghiacciate e contro Glitch addizioni e problemi arrivano sempre fino a 100.
 - Nell'area genitori si può scegliere il **livello di partenza** di ogni abilità (per esempio "Addizioni: fino a 100 con riporto").

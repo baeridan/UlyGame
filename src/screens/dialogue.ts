@@ -2,7 +2,7 @@ import { h, later, onCleanup } from '../core/dom';
 import { speak, stopSpeech } from '../core/speech';
 import { sfx } from '../core/audio';
 import { STORY, type Line, type Speaker } from '../story';
-import { BRICCO, GLITCH, GLITCH_FRIEND, avatarModel } from '../art/characters';
+import { BRICCO, GLITCH, GLITCH_FRIEND, SCOMPIGLIO, avatarModel } from '../art/characters';
 import { dinoById } from '../art/dinos';
 import { current, persist } from '../core/store';
 import { modelView } from '../ui';
@@ -12,6 +12,7 @@ function who(s: Speaker): { name: string; model: Model | null; pitch: number; ra
   const p = current();
   if (s === 'bricco') return { name: 'Bricco', model: BRICCO, pitch: 1.5, rate: 1, cls: 'bricco' };
   if (s === 'glitch') return { name: 'Glitch', model: GLITCH, pitch: 0.6, rate: 1.05, cls: 'glitch' };
+  if (s === 'scompiglio') return { name: 'Capitan Scompiglio', model: SCOMPIGLIO, pitch: 0.8, rate: 1.05, cls: 'pirate' };
   if (s === 'glitchBuono') return { name: 'Glitch il Buono', model: GLITCH_FRIEND, pitch: 1.2, rate: 1, cls: 'glitch-good' };
   if (s === 'player') return { name: p?.name || 'Uly', model: p ? avatarModel(p.avatar) : null, pitch: 1.3, rate: 1, cls: 'player' };
   if (s === 'narratore') return { name: 'Narratore', model: null, pitch: 1, rate: 0.92, cls: 'narrator' };

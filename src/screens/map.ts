@@ -1,10 +1,10 @@
 import { beginScreen, h, later, onCleanup } from '../core/dom';
-import { me, timeExceeded } from '../core/store';
+import { me, persist, timeExceeded } from '../core/store';
 import { brickBtn, brickCounter, avatarView, modal } from '../ui';
-import { drawIsland, zoneAnchor } from './island';
+import { drawIsland, zoneAnchor, type Act } from './island';
 import { iso } from '../art/blocks';
 import { hiCanvas } from '../art/bricks';
-import { ZONES } from '../zones';
+import { ZONES, zonesOfAct } from '../zones';
 import { showZone } from './zone';
 import { showLab } from './lab';
 import { showAlbum } from './album';
@@ -17,32 +17,44 @@ import { dinoById } from '../art/dinos';
 import { sfx } from '../core/audio';
 import { speak } from '../core/speech';
 import { showRest } from './parents';
-import { GLITCH } from '../art/characters';
+import { GLITCH, SCOMPIGLIO } from '../art/characters';
+import { playStory } from './dialogue';
 
 export function zoneUnlocked(z: number) {
   const p = me();
-  return z === 0 || p.zoneProgress[z - 1] >= 3;
+  if (z === 0) return true;
+  if (ZONES[z].act === 2 && ZONES[z - 1].act === 1) return p.bossDone;
+  return p.zoneProgress[z - 1] >= 3;
 }
 
-export function crystals() {
-  return me().zoneProgress.filter((x) => x >= 3).length;
-}
+const BOSS = {
+  1: { name: 'Castello di Glitch', doneName: 'Grande Torre', emoji: '🏰', fight: '⚔️', color: '#8e24aa', villain: GLITCH, key: 'glitch-map', need: 'Il Castello di Glitch si apre solo con tutti e sei i cristalli!', go: 'Hai tutti i cristalli! Vai al Castello di Glitch!' },
+  2: { name: 'Nave di Scompiglio', doneName: 'Faro del Cento', emoji: '🗼', fight: '🏴\u200d☠️', color: '#e53935', villain: SCOMPIGLIO, key: 'pirate-map', need: "La nave di Capitan Scompiglio si raggiunge con tutte e cinque le Uova d'Oro!", go: "Hai le cinque Uova d'Oro! Sali sulla nave di Capitan Scompiglio!" },
+} as const;
 
 /** Mostra la mappa. `after` viene chiamato quando è pronta (es. per un dialogo della storia). */
-export function showMap(after?: () => void) {
+export function showMap(after?: () => void, actArg?: Act) {
   if (timeExceeded()) return showRest();
   const p = me();
-  const root = beginScreen('map-screen');
+  const act: Act = p.bossDone ? (actArg ?? p.lastAct ?? 1) : 1;
+  if (p.lastAct !== act) {
+    p.lastAct = act;
+    persist();
+  }
+  const zones = zonesOfAct(act);
+  const bossDone = act === 1 ? p.bossDone : p.boss2Done;
+  const boss = BOSS[act];
+  const root = beginScreen(`map-screen act${act}`);
   const wrap = h('div', { class: 'map-wrap' });
   const markers = h('div', { class: 'map-markers' });
-  const done = ZONES.map((z) => p.zoneProgress[z.id] >= 3);
+  const done = zones.map((z) => p.zoneProgress[z.id] >= 3);
   const allDone = done.every(Boolean);
 
   const render = () => {
     const W = wrap.clientWidth || window.innerWidth;
     const H = wrap.clientHeight || window.innerHeight - 160;
     const { c, ctx } = hiCanvas(W, H, 'map-canvas');
-    const info = drawIsland(ctx, W, H, done, p.bossDone);
+    const info = drawIsland(ctx, W, H, done, bossDone, act);
     wrap.querySelector('canvas')?.remove();
     wrap.prepend(c);
     markers.replaceChildren();
@@ -52,8 +64,8 @@ export function showMap(after?: () => void) {
       el.style.top = `${sy + info.s / 2}px`;
       markers.append(el);
     };
-    ZONES.forEach((z) => {
-      const a = zoneAnchor(z.id);
+    zones.forEach((z, li) => {
+      const a = zoneAnchor(li, act);
       const unlocked = zoneUnlocked(z.id);
       const prog = p.zoneProgress[z.id];
       const m = h(
@@ -64,7 +76,7 @@ export function showMap(after?: () => void) {
           onclick: () => {
             if (!unlocked) {
               sfx('wrong');
-              speak(`Prima libera la zona ${ZONES[z.id - 1].name}!`);
+              speak(z.id === 6 ? 'Prima batti Glitch!' : `Prima libera la zona ${ZONES[z.id - 1].name}!`);
               return;
             }
             sfx('pop');
@@ -82,37 +94,52 @@ export function showMap(after?: () => void) {
         place(a.x + 1, a.y + 1, h('div', { class: 'map-dino-wrap' }, di));
       }
     });
-    const t = zoneAnchor(6);
+    const t = zoneAnchor(zones.length, act);
     const castle = h(
       'button',
       {
-        class: `zone-marker castle ${allDone ? 'current' : 'locked'} ${p.bossDone ? 'done' : ''}`,
-        style: '--zc:#8e24aa',
+        class: `zone-marker castle ${allDone ? 'current' : 'locked'} ${bossDone ? 'done' : ''}`,
+        style: `--zc:${boss.color}`,
         onclick: () => {
           if (!allDone) {
             sfx('glitch');
-            speak('Il Castello di Glitch si apre solo con tutti e sei i cristalli!');
+            speak(boss.need);
             return;
           }
           sfx('pop');
-          showBoss();
+          showBoss(act);
         },
       },
-      h('span', { class: 'zm-emoji' }, p.bossDone ? '🏰' : allDone ? '⚔️' : '🔒'),
-      allDone ? h('span', { class: 'zm-name' }, p.bossDone ? 'Grande Torre' : 'Castello di Glitch') : null
+      h('span', { class: 'zm-emoji' }, bossDone ? boss.emoji : allDone ? boss.fight : '🔒'),
+      allDone ? h('span', { class: 'zm-name' }, bossDone ? boss.doneName : boss.name) : null
     );
     place(t.x, t.y, castle, info.heightAt(t.x, t.y) + 1.6);
-    if (!p.bossDone) {
-      const gl = img(modelIcon('glitch-map', GLITCH, 60, 60), 'map-glitch');
-      place(t.x - 2, t.y + 1, h('div', { class: 'map-dino-wrap glitchy' }, gl));
+    if (!bossDone) {
+      const gl = img(modelIcon(boss.key, boss.villain, 60, 60), 'map-glitch');
+      place(t.x - 2, t.y + 1, h('div', { class: `map-dino-wrap ${act === 1 ? 'glitchy' : 'pirate'}` }, gl));
     }
   };
 
   const crystalBar = h(
     'div',
-    { class: 'crystals', title: 'Cristalli del Pensiero' },
-    ...ZONES.map((z) => h('span', { class: `crystal ${p.zoneProgress[z.id] >= 3 ? 'on' : ''}`, title: z.crystal }, '💎'))
+    { class: 'crystals', title: act === 1 ? 'Cristalli del Pensiero' : "Uova d'Oro" },
+    ...zones.map((z) => h('span', { class: `crystal ${p.zoneProgress[z.id] >= 3 ? 'on' : ''}`, title: z.crystal }, z.reward))
   );
+  const firstTrip = p.bossDone && !p.storySeen.includes('act2-intro');
+  const travel = p.bossDone
+    ? h(
+        'button',
+        {
+          class: `btn travel ${firstTrip ? 'new' : ''}`,
+          onclick: () => {
+            sfx('whoosh');
+            if (act === 1) showMap(() => playStory('act2-intro', () => {}), 2);
+            else showMap(undefined, 1);
+          },
+        },
+        act === 1 ? '⛵ Isola Lontana' : '🏝️ Prima isola'
+      )
+    : null;
   const av = avatarView(p.avatar, 56);
   root.append(
     h(
@@ -121,6 +148,7 @@ export function showMap(after?: () => void) {
       h('button', { class: 'btn round back', 'aria-label': 'Menu', onclick: () => (sfx('click'), showTitle()) }, '🏠'),
       h('div', { class: 'player-chip' }, av.el, h('b', {}, p.name)),
       crystalBar,
+      travel,
       brickCounter(p.bricks)
     ),
     h('div', { class: 'map-area' }, wrap),
@@ -146,12 +174,13 @@ export function showMap(after?: () => void) {
   window.addEventListener('resize', onResize);
   onCleanup(() => window.removeEventListener('resize', onResize));
   // suggerimento vocale sulla prossima zona
-  const next = ZONES.find((z) => p.zoneProgress[z.id] < 3);
+  const next = zones.find((z) => p.zoneProgress[z.id] < 3);
   if (!after)
     later(600, () => {
-    if (next) speak(`Tocca ${next.name} per continuare l'avventura!`);
-    else if (!p.bossDone) speak('Hai tutti i cristalli! Vai al Castello di Glitch!');
-  });
+      if (next) speak(`Tocca ${next.name} per continuare l'avventura!`);
+      else if (!bossDone) speak(boss.go);
+      else if (act === 1 && firstTrip) speak("Una nuova avventura ti aspetta: tocca la barca per andare sull'Isola Lontana!");
+    });
 }
 
 export function showCrystalModal(zoneIdx: number, then: () => void) {
@@ -160,7 +189,7 @@ export function showCrystalModal(zoneIdx: number, then: () => void) {
     h(
       'div',
       { class: 'col center crystal-modal' },
-      h('div', { class: 'crystal-big' }, '💎'),
+      h('div', { class: 'crystal-big' }, z.reward),
       h('h2', {}, z.crystal),
       h('p', {}, `Hai liberato ${z.name}! Ora puoi costruire ${dinoById(z.dino).name} nel Laboratorio.`),
       brickBtn('Evviva!', () => {
@@ -170,5 +199,5 @@ export function showCrystalModal(zoneIdx: number, then: () => void) {
     )
   );
   sfx('win');
-  speak(`Hai trovato il ${z.crystal}!`);
+  speak(z.act === 1 ? `Hai trovato il ${z.crystal}!` : `Hai salvato l'${z.crystal}!`);
 }

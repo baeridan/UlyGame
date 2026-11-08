@@ -89,7 +89,7 @@ export function showParents() {
         h(
           'p',
           {},
-          `Oggi: ${p.play.date === today() ? fmtMin(p.play.seconds) : '0 min'} • Zone liberate: ${p.zoneProgress.filter((x) => x >= 3).length}/6 • Glitch battuto: ${p.bossDone ? 'sì' : 'no'} • Dinosauri: ${p.dinosBuilt.length} • Mattoncini totali: ${p.totalBricks}`
+          `Oggi: ${p.play.date === today() ? fmtMin(p.play.seconds) : '0 min'} • Zone liberate: ${p.zoneProgress.filter((x) => x >= 3).length}/${p.zoneProgress.length} • Glitch: ${p.bossDone ? 'battuto' : 'no'} • Capitan Scompiglio: ${p.boss2Done ? 'battuto' : 'no'} • Dinosauri: ${p.dinosBuilt.length} • Mattoncini totali: ${p.totalBricks}`
         ),
         week.length ? h('p', { class: 'muted' }, 'Ultimi giorni: ' + week.map((d) => `${d.date.slice(5)} ${fmtMin(d.seconds)}`).join(' · ')) : null,
         strong.length ? h('p', {}, '💪 Punti forti: ' + strong.map((k) => SKILL_INFO[k].name).join(', ')) : null,
@@ -181,7 +181,7 @@ export function showParents() {
           h(
             'p',
             {},
-            'Il gioco segue il programma di seconda elementare: numeri fino a 100, addizioni e sottrazioni, prime tabelline, forme, misure, sequenze, coding e logica. La difficoltà si adatta da sola: sale dopo 3 risposte giuste di fila e scende dopo 2 errori di fila. Nessuna pubblicità, nessun acquisto, nessun dato personale online: in multiplayer si usano solo nomi di dinosauri e messaggi predefiniti, senza chat.'
+            'Il gioco accompagna tutta la seconda elementare. Prima isola: numeri fino a 100, addizioni e sottrazioni, prime tabelline, forme, misure, sequenze, coding e logica. Isola Lontana (dopo Glitch): linea del 100 con salti da 10 e passi da 1, addizioni in colonna con il riporto, sottrazioni in colonna con il prestito, tutte le tabelline fino al ×9. Ogni missione alza un po\' il livello minimo. La difficoltà si adatta da sola: sale dopo 3 risposte giuste di fila e scende dopo 2 errori di fila. Nessuna pubblicità, nessun acquisto, nessun dato personale online: in multiplayer si usano solo nomi di dinosauri e messaggi predefiniti, senza chat.'
           )
         )
       )

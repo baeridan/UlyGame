@@ -1,4 +1,4 @@
-export type Speaker = 'narratore' | 'bricco' | 'glitch' | 'glitchBuono' | 'player' | `dino:${string}`;
+export type Speaker = 'narratore' | 'bricco' | 'glitch' | 'glitchBuono' | 'scompiglio' | 'player' | `dino:${string}`;
 
 export interface Line {
   who: Speaker;
@@ -83,5 +83,75 @@ export const STORY: Record<string, Line[]> = {
     { who: 'glitchBuono', text: 'Davvero?! Evviva! Da oggi sarò Glitch il Buono!' },
     { who: 'narratore', text: "E così l'Isola dei Blocchi tornò in ordine, piena di dinosauri e di amici." },
     { who: 'bricco', text: 'Ora puoi sfidare i tuoi amici nella Sfida, costruire nel Cantiere e collezionare tutti i dinosauri!' },
+  ],
+  // ======================= SECONDA PARTE: L'ISOLA LONTANA =======================
+  'act2-intro': [
+    { who: 'narratore', text: "Una mattina, dalla cima della Grande Torre, Bricco vide qualcosa all'orizzonte..." },
+    { who: 'bricco', text: "Guarda {name}! Laggiù c'è un'altra isola: l'Isola Lontana!" },
+    { who: 'scompiglio', text: "Arrr! Sono Capitan Scompiglio, il pirata più disordinato del mare! Ho preso le Uova d'Oro dei dinosauri!" },
+    { who: 'glitchBuono', text: "Oh no! Senza le Uova d'Oro i cuccioli di dinosauro non possono nascere!" },
+    { who: 'bricco', text: 'Per arrivare laggiù costruiremo il Ponte del Cento: cento mattoncini in fila, cinque rossi e cinque blu!' },
+    { who: 'player', text: 'Andiamo! A scuola ho imparato tante cose nuove!' },
+  ],
+  'intro-6': [
+    { who: 'bricco', text: 'Ecco il Ponte del Cento! Ogni dieci mattoncini c\'è una torretta: 10, 20, 30... fino a 100.' },
+    { who: 'bricco', text: 'I mattoncini sono a gruppi di cinque, cinque rossi e cinque blu: così li conti in un attimo, senza contarli uno per uno!' },
+    { who: 'scompiglio', text: 'Arrr! Ho tolto i numeri dal ponte! Non saprai mai dove sei!' },
+    { who: 'glitchBuono', text: 'Il Velociraptor è un campione di salti. Aiutalo: salti da 10 e passi da 1!' },
+  ],
+  'outro-6': [
+    { who: 'dino:raptor', text: 'Salto da dieci, passo da uno... che divertimento! Grazie {name}!' },
+    { who: 'bricco', text: "Hai salvato il primo Uovo d'Oro! Ora andiamo al Porto del Riporto." },
+  ],
+  'intro-7': [
+    { who: 'bricco', text: 'Al porto bisogna caricare le casse sulle navi. Le contiamo con le addizioni in colonna!' },
+    { who: 'bricco', text: 'Si parte sempre dalle unità, a destra. Se le unità fanno 10 o di più, una decina sale sopra le decine: è il riporto!' },
+    { who: 'scompiglio', text: 'Le mie casse sono troppo pesanti per te! Arrr!' },
+    { who: 'player', text: 'Unità, decine e riporto: ce la posso fare!' },
+  ],
+  'outro-7': [
+    { who: 'dino:mosa', text: 'Splash! Grazie per avermi liberato dalla rete dei pirati!' },
+    { who: 'bricco', text: "Secondo Uovo d'Oro! Ora entriamo nella Grotta del Prestito." },
+  ],
+  'intro-8': [
+    { who: 'bricco', text: 'Nella grotta facciamo le sottrazioni in colonna. Ma a volte le unità non bastano...' },
+    { who: 'glitchBuono', text: 'Allora si chiede in prestito una decina! La decina diventa dieci unità, e il conto si può fare.' },
+    { who: 'scompiglio', text: 'Nella mia grotta nessuno presta niente a nessuno! Arrr!' },
+  ],
+  'outro-8': [
+    { who: 'dino:pachy', text: 'Toc toc! Con la mia testa dura ho rotto la gabbia. Grazie {name}!' },
+    { who: 'bricco', text: "Terzo Uovo d'Oro! Sento profumo di fiori: è il Giardino delle Tabelline." },
+  ],
+  'intro-9': [
+    { who: 'bricco', text: 'Nel giardino i fiori crescono in file ordinate: 2, 4, 6, 8... sono le tabelline!' },
+    { who: 'bricco', text: 'Moltiplicare vuol dire fare salti tutti uguali: 3 salti da 4 arrivano a 12.' },
+    { who: 'scompiglio', text: 'Ho calpestato tutte le aiuole! Le file non tornano più! Arrr!' },
+  ],
+  'outro-9': [
+    { who: 'dino:parasaur', text: 'Tu-tuuu! Suono la mia cresta-tromba per festeggiare le tabelline!' },
+    { who: 'bricco', text: "Quarto Uovo d'Oro! Manca solo l'Officina dei Numeri." },
+  ],
+  'intro-10': [
+    { who: 'bricco', text: "Nell'Officina dei Numeri le macchine usano tutto quello che hai imparato." },
+    { who: 'glitchBuono', text: 'Tabelline del 7, dell\'8 e del 9, riporti e prestiti... sei pronto, {name}?' },
+    { who: 'player', text: 'Prontissimo!' },
+  ],
+  'outro-10': [
+    { who: 'dino:spino', text: 'Le macchine ripartono! Grazie, costruttore!' },
+    { who: 'bricco', text: "Abbiamo salvato cinque Uova d'Oro... ma l'ultimo è sulla nave di Capitan Scompiglio, vicino al Faro!" },
+  ],
+  'intro-boss2': [
+    { who: 'scompiglio', text: "Arrr! Vuoi l'ultimo uovo? Allora batti il mio equipaggio di domande!" },
+    { who: 'bricco', text: 'Ogni risposta giusta riaccende una luce del Faro del Cento. Forza {name}!' },
+  ],
+  'outro-boss2': [
+    { who: 'scompiglio', text: 'Mi arrendo... Il Faro è di nuovo acceso.' },
+    { who: 'scompiglio', text: 'Sai, prendevo le uova perché volevo un equipaggio di amici...' },
+    { who: 'player', text: 'Gli amici non si rubano: si trovano giocando insieme!' },
+    { who: 'scompiglio', text: 'Allora... posso giocare con voi?' },
+    { who: 'glitchBuono', text: 'Certo! Più siamo, più ci divertiamo!' },
+    { who: 'dino:diplo', text: "Craaack! Sono nato! Ciao a tutti, io sono Dippy!" },
+    { who: 'narratore', text: "E così tutte le uova si schiusero, e l'Isola Lontana si riempì di cuccioli e di amici." },
+    { who: 'bricco', text: '{name}, hai attraversato tutta la seconda elementare dell\'isola. Sei un Super Costruttore!' },
   ],
 };
