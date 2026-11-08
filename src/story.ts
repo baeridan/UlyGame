@@ -88,7 +88,7 @@ export const STORY: Record<string, Line[]> = {
   'act2-intro': [
     { who: 'narratore', text: "Una mattina, dalla cima della Grande Torre, Bricco vide qualcosa all'orizzonte..." },
     { who: 'bricco', text: "Guarda {name}! Laggiù c'è un'altra isola: l'Isola Lontana!" },
-    { who: 'scompiglio', text: "Arrr! Sono Capitan Scompiglio, il pirata più disordinato del mare! Ho preso le Uova d'Oro dei dinosauri!" },
+    { who: 'scompiglio', text: "Corpo di mille balene! Sono Capitan Scompiglio, il pirata più disordinato del mare! Ho preso le Uova d'Oro dei dinosauri!" },
     { who: 'glitchBuono', text: "Oh no! Senza le Uova d'Oro i cuccioli di dinosauro non possono nascere!" },
     { who: 'bricco', text: 'Per arrivare laggiù costruiremo il Ponte del Cento: cento mattoncini in fila, cinque rossi e cinque blu!' },
     { who: 'player', text: 'Andiamo! A scuola ho imparato tante cose nuove!' },
@@ -96,7 +96,7 @@ export const STORY: Record<string, Line[]> = {
   'intro-6': [
     { who: 'bricco', text: 'Ecco il Ponte del Cento! Ogni dieci mattoncini c\'è una torretta: 10, 20, 30... fino a 100.' },
     { who: 'bricco', text: 'I mattoncini sono a gruppi di cinque, cinque rossi e cinque blu: così li conti in un attimo, senza contarli uno per uno!' },
-    { who: 'scompiglio', text: 'Arrr! Ho tolto i numeri dal ponte! Non saprai mai dove sei!' },
+    { who: 'scompiglio', text: 'Per mille cannoni! Ho tolto i numeri dal ponte! Non saprai mai dove sei!' },
     { who: 'glitchBuono', text: 'Il Velociraptor è un campione di salti. Aiutalo: salti da 10 e passi da 1!' },
   ],
   'outro-6': [
@@ -106,7 +106,7 @@ export const STORY: Record<string, Line[]> = {
   'intro-7': [
     { who: 'bricco', text: 'Al porto bisogna caricare le casse sulle navi. Le contiamo con le addizioni in colonna!' },
     { who: 'bricco', text: 'Si parte sempre dalle unità, a destra. Se le unità fanno 10 o di più, una decina sale sopra le decine: è il riporto!' },
-    { who: 'scompiglio', text: 'Le mie casse sono troppo pesanti per te! Arrr!' },
+    { who: 'scompiglio', text: 'Le mie casse sono troppo pesanti per te, piccolo mozzo!' },
     { who: 'player', text: 'Unità, decine e riporto: ce la posso fare!' },
   ],
   'outro-7': [
@@ -116,7 +116,7 @@ export const STORY: Record<string, Line[]> = {
   'intro-8': [
     { who: 'bricco', text: 'Nella grotta facciamo le sottrazioni in colonna. Ma a volte le unità non bastano...' },
     { who: 'glitchBuono', text: 'Allora si chiede in prestito una decina! La decina diventa dieci unità, e il conto si può fare.' },
-    { who: 'scompiglio', text: 'Nella mia grotta nessuno presta niente a nessuno! Arrr!' },
+    { who: 'scompiglio', text: 'Nella mia grotta nessuno presta niente a nessuno, parola di pirata!' },
   ],
   'outro-8': [
     { who: 'dino:pachy', text: 'Toc toc! Con la mia testa dura ho rotto la gabbia. Grazie {name}!' },
@@ -125,7 +125,7 @@ export const STORY: Record<string, Line[]> = {
   'intro-9': [
     { who: 'bricco', text: 'Nel giardino i fiori crescono in file ordinate: 2, 4, 6, 8... sono le tabelline!' },
     { who: 'bricco', text: 'Moltiplicare vuol dire fare salti tutti uguali: 3 salti da 4 arrivano a 12.' },
-    { who: 'scompiglio', text: 'Ho calpestato tutte le aiuole! Le file non tornano più! Arrr!' },
+    { who: 'scompiglio', text: 'Ho calpestato tutte le aiuole! Le file non tornano più! Per tutti i pappagalli!' },
   ],
   'outro-9': [
     { who: 'dino:parasaur', text: 'Tu-tuuu! Suono la mia cresta-tromba per festeggiare le tabelline!' },
@@ -141,7 +141,7 @@ export const STORY: Record<string, Line[]> = {
     { who: 'bricco', text: "Abbiamo salvato cinque Uova d'Oro... ma l'ultimo è sulla nave di Capitan Scompiglio, vicino al Faro!" },
   ],
   'intro-boss2': [
-    { who: 'scompiglio', text: "Arrr! Vuoi l'ultimo uovo? Allora batti il mio equipaggio di domande!" },
+    { who: 'scompiglio', text: "All'arrembaggio! Vuoi l'ultimo uovo? Allora batti il mio equipaggio di domande!" },
     { who: 'bricco', text: 'Ogni risposta giusta riaccende una luce del Faro del Cento. Forza {name}!' },
   ],
   'outro-boss2': [

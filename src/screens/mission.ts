@@ -14,6 +14,7 @@ import { confetti, floatText } from '../core/fx';
 import { showZone } from './zone';
 import { showMap, showCrystalModal } from './map';
 import { playStory } from './dialogue';
+import { playTheme, type ThemeName } from '../core/music';
 
 const BRICKS_FOR: Record<Result, number> = { first: 3, second: 2, fail: 1 };
 
@@ -26,6 +27,7 @@ interface RunOpts {
   sideLabel: string;
   boss?: boolean;
   minLevel?: Partial<Record<SkillId, number>>;
+  theme?: ThemeName;
   onExit: () => void;
   onEnd: (firstTries: number, total: number, bricks: number) => void;
 }
@@ -33,6 +35,7 @@ interface RunOpts {
 function runner(o: RunOpts) {
   const p = me();
   const root = beginScreen(`mission-screen ${o.boss ? 'boss' : ''}`);
+  playTheme(o.theme || (o.boss ? 'boss' : 'focus'));
   const rng = makeRng();
   const total = o.skills.length;
   const queue = o.skills.slice();
@@ -173,6 +176,7 @@ export function showBoss(act: 1 | 2 = 1) {
       skills,
       sideExtra: hp,
       minLevel: cfg.min,
+      theme: act === 1 ? 'boss' : 'pirate',
       side: () => {
         const v = modelView(cfg.model, 220, 220, { jitter: cfg.jitter });
         gv = v;

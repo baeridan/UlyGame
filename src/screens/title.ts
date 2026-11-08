@@ -4,7 +4,7 @@ import { showProfiles } from './profiles';
 import { showMultiMenu } from './multi';
 import { showParentGate } from './parents';
 import { DINOS } from '../art/dinos';
-import { startMusic } from '../core/audio';
+import { playTheme, startMusic } from '../core/music';
 import { current } from '../core/store';
 import { showMap } from './map';
 
@@ -15,6 +15,7 @@ function logo() {
 
 export function showTitle() {
   const root = beginScreen('title-screen');
+  playTheme('adventure');
   const parade = h('div', { class: 'parade' });
   const picks = [DINOS[4], DINOS[0], DINOS[1], DINOS[5], DINOS[2]];
   const views = picks.map((d) => {

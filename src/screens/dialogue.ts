@@ -10,14 +10,14 @@ import type { Model } from '../art/bricks';
 
 function who(s: Speaker): { name: string; model: Model | null; pitch: number; rate: number; cls: string } {
   const p = current();
-  if (s === 'bricco') return { name: 'Bricco', model: BRICCO, pitch: 1.5, rate: 1, cls: 'bricco' };
-  if (s === 'glitch') return { name: 'Glitch', model: GLITCH, pitch: 0.6, rate: 1.05, cls: 'glitch' };
-  if (s === 'scompiglio') return { name: 'Capitan Scompiglio', model: SCOMPIGLIO, pitch: 0.8, rate: 1.05, cls: 'pirate' };
-  if (s === 'glitchBuono') return { name: 'Glitch il Buono', model: GLITCH_FRIEND, pitch: 1.2, rate: 1, cls: 'glitch-good' };
-  if (s === 'player') return { name: p?.name || 'Uly', model: p ? avatarModel(p.avatar) : null, pitch: 1.3, rate: 1, cls: 'player' };
-  if (s === 'narratore') return { name: 'Narratore', model: null, pitch: 1, rate: 0.92, cls: 'narrator' };
+  if (s === 'bricco') return { name: 'Bricco', model: BRICCO, pitch: 1.15, rate: 1, cls: 'bricco' };
+  if (s === 'glitch') return { name: 'Glitch', model: GLITCH, pitch: 0.85, rate: 1, cls: 'glitch' };
+  if (s === 'scompiglio') return { name: 'Capitan Scompiglio', model: SCOMPIGLIO, pitch: 0.9, rate: 1, cls: 'pirate' };
+  if (s === 'glitchBuono') return { name: 'Glitch il Buono', model: GLITCH_FRIEND, pitch: 1.05, rate: 1, cls: 'glitch-good' };
+  if (s === 'player') return { name: p?.name || 'Uly', model: p ? avatarModel(p.avatar) : null, pitch: 1.1, rate: 1, cls: 'player' };
+  if (s === 'narratore') return { name: 'Narratore', model: null, pitch: 1, rate: 0.95, cls: 'narrator' };
   const d = dinoById(s.slice(5));
-  return { name: d.nick, model: d.model, pitch: 0.75, rate: 0.95, cls: 'dino' };
+  return { name: d.nick, model: d.model, pitch: 0.9, rate: 0.95, cls: 'dino' };
 }
 
 /** Mostra un dialogo della storia. Chiama onDone alla fine. */
@@ -55,6 +55,8 @@ export function playStory(key: string, onDone: () => void, force = false) {
     name.textContent = w.name;
     portrait.replaceChildren(w.model ? modelView(w.model, 150, 150, { jitter: l.who === 'glitch' }).el : h('div', { class: 'narrator-icon' }, '📜'));
     if (l.who === 'glitch') sfx('glitch');
+    else if (l.who === 'scompiglio') sfx('pirate');
+    else if (l.who.startsWith('dino:')) sfx('roar');
     text.textContent = '';
     let k = 0;
     clearInterval(typing);

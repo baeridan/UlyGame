@@ -10,6 +10,7 @@ import { makeRng } from '../core/rng';
 import { sfx } from '../core/audio';
 import { speak } from '../core/speech';
 import { confetti } from '../core/fx';
+import { playTheme } from '../core/music';
 import { avatarModel } from '../art/characters';
 import { DINOS } from '../art/dinos';
 
@@ -121,6 +122,7 @@ const TARGET = 8;
 
 export function runVersus(players: LocalPlayer[]) {
   const root = beginScreen('versus-screen');
+  playTheme('boss');
   const scores = [0, 0];
   let over = false;
   const lanes = players.map((p, i) => {
@@ -196,6 +198,7 @@ const COOP_TURNS = 10;
 
 export function runCoop(players: LocalPlayer[]) {
   const root = beginScreen('coop-screen');
+  playTheme('focus');
   const d = DINOS[Math.floor(Math.random() * DINOS.length)];
   const view: ModelView = modelView(d.model, 260, 200, { count: 0 });
   const rng = makeRng();

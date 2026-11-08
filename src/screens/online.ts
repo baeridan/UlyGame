@@ -9,6 +9,7 @@ import { makeRng } from '../core/rng';
 import { sfx } from '../core/audio';
 import { speak } from '../core/speech';
 import { confetti, toast, floatText } from '../core/fx';
+import { playTheme } from '../core/music';
 import { DINOS } from '../art/dinos';
 
 export const NET_NAMES = ['Rex', 'Trici', 'Stego', 'Ptero', 'Anki', 'Brachi', 'Veloce', 'Spino', 'Paro', 'Bricco'];
@@ -151,6 +152,7 @@ function startOnline(net: Net, start: Extract<ServerMsg, { t: 'start' }>, level:
   const other = 1 - you;
   const names = start.players.map((p) => NET_NAMES[p.n] || 'Amico');
   const root = beginScreen(`online-game ${start.mode}`);
+  playTheme(start.mode === 'race' ? 'boss' : 'focus');
   const avatars = start.players.map((p) => avatarView(p.a, 60, false));
   const exit = () => (net.close(), showMultiMenu());
   const rng = makeRng();

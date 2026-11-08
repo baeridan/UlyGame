@@ -5,13 +5,29 @@ import './styles.css';
 import { showTitle } from './screens/title';
 import { showTestChallenge } from './screens/mission';
 import type { SkillId } from './games/types';
-import { unlockAudio } from './core/audio';
+import { unlockAudio, pauseAudio, resumeAudio } from './core/audio';
+import { stopSpeech } from './core/speech';
+import { Capacitor } from '@capacitor/core';
+import { App } from '@capacitor/app';
 import { addPlayTime, current, save } from './core/store';
 
 document.documentElement.classList.toggle('cb', save.settings.colorblind);
 
 // sblocca l'audio al primo tocco (necessario su iPad)
 window.addEventListener('pointerdown', () => unlockAudio(), { once: true });
+
+// quando l'app va in secondo piano (tasto Home, schermo spento) musica e voce si fermano
+const goBackground = () => {
+  pauseAudio();
+  stopSpeech();
+};
+document.addEventListener('visibilitychange', () => (document.hidden ? goBackground() : resumeAudio()));
+window.addEventListener('pagehide', goBackground);
+if (Capacitor.isNativePlatform()) {
+  App.addListener('appStateChange', ({ isActive }) => (isActive ? resumeAudio() : goBackground())).catch(() => {});
+  App.addListener('pause', goBackground).catch(() => {});
+  App.addListener('resume', resumeAudio).catch(() => {});
+}
 
 // conteggio del tempo di gioco
 setInterval(() => {

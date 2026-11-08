@@ -51,6 +51,8 @@ export interface Settings {
   timeLimit: number; // minuti al giorno, 0 = nessun limite
   serverUrl: string;
   unlockedUntil: string; // data in cui il genitore ha sbloccato il tempo extra
+  voiceName: string; // voce scelta dal genitore ('' = automatica)
+  voiceRate: number; // velocità della voce (1 = normale)
 }
 
 export interface Save {
@@ -78,6 +80,8 @@ const defaultSettings = (): Settings => ({
   timeLimit: 0,
   serverUrl: '',
   unlockedUntil: '',
+  voiceName: '',
+  voiceRate: 1,
 });
 
 export const today = () => new Date().toISOString().slice(0, 10);

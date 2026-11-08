@@ -19,6 +19,7 @@ import { speak } from '../core/speech';
 import { showRest } from './parents';
 import { GLITCH, SCOMPIGLIO } from '../art/characters';
 import { playStory } from './dialogue';
+import { playTheme } from '../core/music';
 
 export function zoneUnlocked(z: number) {
   const p = me();
@@ -48,6 +49,7 @@ export function showMap(after?: () => void, actArg?: Act) {
   const bossDone = act === 1 ? p.bossDone : p.boss2Done;
   const boss = BOSS[act];
   const root = beginScreen(`map-screen act${act}`);
+  playTheme(act === 1 ? 'adventure' : 'sea');
   const wrap = h('div', { class: 'map-wrap' });
   const markers = h('div', { class: 'map-markers' });
   const done = zones.map((z) => p.zoneProgress[z.id] >= 3);

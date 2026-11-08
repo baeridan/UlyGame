@@ -6,7 +6,7 @@ import { showTitle } from './title';
 import { applyVolumes, sfx } from '../core/audio';
 import { toast } from '../core/fx';
 import { BRICCO } from '../art/characters';
-import { speak } from '../core/speech';
+import { speak, italianVoices } from '../core/speech';
 import { ZONES } from '../zones';
 
 export function showParentGate(then: () => void = showParents) {
@@ -35,6 +35,43 @@ function pct(p: Profile, s: SkillId) {
   const st = p.skills[s];
   if (!st || !st.attempts) return null;
   return Math.round((st.correct / st.attempts) * 100);
+}
+
+/** Scelta della voce (quelle italiane installate), velocità e prova. */
+function voiceSettings() {
+  const s = save.settings;
+  const sel = h('select', { id: 'voice-name', 'aria-label': 'Voce' }, h('option', { value: '' }, 'Automatica')) as HTMLSelectElement;
+  italianVoices().then((list) => {
+    list.forEach((v) => sel.append(h('option', { value: v.name, selected: v.name === s.voiceName }, v.label)));
+    if (!list.length) sel.append(h('option', { value: '', disabled: true }, 'Nessuna voce italiana trovata'));
+  });
+  sel.addEventListener('change', () => {
+    s.voiceName = sel.value;
+    persist();
+    test();
+  });
+  const rate = h(
+    'select',
+    { id: 'voice-rate', 'aria-label': 'Velocità della voce' },
+    ...[
+      [0.85, 'Lenta'],
+      [1, 'Normale'],
+      [1.12, 'Veloce'],
+    ].map(([v, l]) => h('option', { value: String(v), selected: Math.abs((s.voiceRate || 1) - Number(v)) < 0.01 }, String(l)))
+  ) as HTMLSelectElement;
+  rate.addEventListener('change', () => {
+    s.voiceRate = Number(rate.value);
+    persist();
+    test();
+  });
+  const test = () => speak('Ciao! Sono la voce dell\'Isola di Uly. Quanto fa 27 più 8? Sette più otto fa quindici: scrivo cinque e porto uno!', { pitch: 1 }, true);
+  return h(
+    'div',
+    { class: 'setting col' },
+    h('span', {}, '🎙️ Quale voce e quanto veloce'),
+    h('div', { class: 'row gap wrap' }, sel, rate, h('button', { class: 'btn small', onclick: test }, '▶ Prova')),
+    h('small', { class: 'muted' }, 'Su Android le voci "internet" sono più naturali ma funzionano solo con il Wi-Fi. Altre voci si scaricano da Impostazioni ▸ Sintesi vocale ▸ Motore di Google ▸ Installa dati vocali.')
+  );
 }
 
 /** Apertura dell'Isola Lontana (seconda parte dell'anno) scelta dal genitore. */
@@ -183,6 +220,7 @@ export function showParents() {
           range('🎵 Musica', s.music, (v) => (s.music = v)),
           range('🔊 Effetti', s.sfx, (v) => (s.sfx = v)),
           toggle('🗣️ Voce che legge le domande', s.voice, (v) => (s.voice = v)),
+          voiceSettings(),
           toggle('🎨 Modalità daltonici (simboli sui colori)', s.colorblind, (v) => (s.colorblind = v)),
           h('label', { class: 'setting' }, h('span', {}, '⏰ Tempo di gioco'), limit),
           h('label', { class: 'setting col' }, h('span', {}, '🌐 Server multiplayer online'), server)

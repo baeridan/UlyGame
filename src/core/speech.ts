@@ -5,51 +5,112 @@ import { TextToSpeech } from '@capacitor-community/text-to-speech';
 /** Nell'app Android/iOS si usa la voce nativa del sistema (il WebView non ha la sintesi vocale). */
 const native = Capacitor.isNativePlatform();
 
-let voice: SpeechSynthesisVoice | null = null;
+export interface VoiceOption {
+  name: string;
+  label: string;
+}
 
-function pickVoice() {
+// ---------------- voci disponibili ----------------
+let webVoices: SpeechSynthesisVoice[] = [];
+let nativeVoices: { name: string; lang: string; localService: boolean; index: number }[] = [];
+let nativeLoaded: Promise<void> | null = null;
+
+function loadWebVoices() {
   if (!('speechSynthesis' in window)) return;
-  const voices = speechSynthesis.getVoices();
-  voice =
-    voices.find((v) => v.lang.toLowerCase().startsWith('it') && /google|alice|federica|elsa|paola/i.test(v.name)) ||
-    voices.find((v) => v.lang.toLowerCase().startsWith('it')) ||
-    null;
+  webVoices = speechSynthesis.getVoices().filter((v) => v.lang.toLowerCase().startsWith('it'));
 }
-if ('speechSynthesis' in window) {
-  pickVoice();
-  speechSynthesis.onvoiceschanged = pickVoice;
+if (!native && 'speechSynthesis' in window) {
+  loadWebVoices();
+  speechSynthesis.onvoiceschanged = loadWebVoices;
 }
 
-/** Ripulisce il testo da emoji e simboli prima di leggerlo. */
-function clean(text: string) {
-  return text
-    .replace(/×/g, ' per ')
-    .replace(/÷/g, ' diviso ')
-    .replace(/(\d)\s*-\s*(\d)/g, '$1 meno $2')
-    .replace(/\+/g, ' più ')
-    .replace(/=\s*\?/g, ' fa? ')
-    .replace(/\?{2,}/g, '?')
-    .replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, '')
-    .replace(/[<>*_#]/g, ' ');
+function loadNativeVoices() {
+  if (!nativeLoaded)
+    nativeLoaded = TextToSpeech.getSupportedVoices()
+      .then(({ voices }) => {
+        nativeVoices = voices
+          .map((v, index) => ({ name: v.name, lang: v.lang, localService: v.localService, index }))
+          .filter((v) => v.lang.toLowerCase().replace('_', '-').startsWith('it'));
+      })
+      .catch(() => {});
+  return nativeLoaded;
+}
+if (native) loadNativeVoices();
+
+function pretty(name: string, local: boolean) {
+  // es. "it-it-x-itd-local" → "Voce D (sul tablet)"
+  const m = name.match(/x-it([a-z])-(local|network)/i);
+  if (m) return `Voce ${m[1].toUpperCase()} ${m[2] === 'network' ? '(internet, più naturale)' : '(sul tablet)'}`;
+  return local ? name : `${name} (internet)`;
 }
 
-export function speak(text: string, opts: { pitch?: number; rate?: number } = {}) {
-  if (!save.settings.voice) return;
+/** Elenco delle voci italiane installate, per l'area genitori. */
+export async function italianVoices(): Promise<VoiceOption[]> {
   if (native) {
+    await loadNativeVoices();
+    return nativeVoices.map((v) => ({ name: v.name, label: pretty(v.name, v.localService) }));
+  }
+  loadWebVoices();
+  return webVoices.map((v) => ({ name: v.name, label: v.name }));
+}
+
+function webVoice(): SpeechSynthesisVoice | null {
+  const chosen = webVoices.find((v) => v.name === save.settings.voiceName);
+  if (chosen) return chosen;
+  // automatica: le voci "naturali" o "Google" suonano meglio di quelle di sistema
+  return webVoices.find((v) => /natural|neural|google|alice|federica|elsa|isabella/i.test(v.name)) || webVoices[0] || null;
+}
+
+// ---------------- pulizia del testo ----------------
+/** Versi e onomatopee: si sentono come effetti sonori, la voce li salta. */
+const SOUNDS = /\b(bz+t|squi+k|cra+ck|r+o+a+r+|tu-tu+|arr+|gr+r+)\b[!.,]*/gi;
+
+export function clean(text: string) {
+  return (
+    text
+      .replace(/×/g, ' per ')
+      .replace(/÷/g, ' diviso ')
+      .replace(/(\d)\s*[-−]\s*(\d)/g, '$1 meno $2')
+      .replace(/−/g, ' meno ')
+      .replace(/\+/g, ' più ')
+      .replace(/=\s*\?/g, ' fa? ')
+      .replace(/\?{2,}/g, '?')
+      .replace(SOUNDS, ' ')
+      // parole tutte maiuscole (GRANDE, SPECCHIO): si leggono come parole, non lettera per lettera
+      .replace(/\b([A-ZÀ-Ý]{2,})\b/g, (w) => w.toLowerCase())
+      // lettere ripetute (Evvivaaa) → una sola
+      .replace(/([a-zà-ý])\1{2,}/gi, '$1')
+      .replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu, '')
+      .replace(/[<>*_#⬜]/g, ' ')
+      .replace(/\s{2,}/g, ' ')
+      .trim()
+  );
+}
+
+// ---------------- parlare ----------------
+export function speak(text: string, opts: { pitch?: number; rate?: number } = {}, force = false) {
+  if (!save.settings.voice && !force) return;
+  const t = clean(text);
+  if (!t) return;
+  const rate = (opts.rate ?? 0.95) * (save.settings.voiceRate || 1);
+  const pitch = opts.pitch ?? 1;
+  if (native) {
+    const v = nativeVoices.find((x) => x.name === save.settings.voiceName);
     TextToSpeech.stop()
       .catch(() => {})
-      .then(() => TextToSpeech.speak({ text: clean(text), lang: 'it-IT', rate: opts.rate ?? 0.95, pitch: opts.pitch ?? 1.1, volume: 1, category: 'ambient' }))
+      .then(() => TextToSpeech.speak({ text: t, lang: 'it-IT', rate, pitch, volume: 1, category: 'ambient', ...(v ? { voice: v.index } : {}) }))
       .catch(() => {});
     return;
   }
   if (!('speechSynthesis' in window)) return;
   try {
     speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(clean(text));
+    const u = new SpeechSynthesisUtterance(t);
     u.lang = 'it-IT';
-    if (voice) u.voice = voice;
-    u.rate = opts.rate ?? 0.95;
-    u.pitch = opts.pitch ?? 1.1;
+    const v = webVoice();
+    if (v) u.voice = v;
+    u.rate = rate;
+    u.pitch = pitch;
     speechSynthesis.speak(u);
   } catch {
     /* ignora */
