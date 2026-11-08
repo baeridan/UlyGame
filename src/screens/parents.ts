@@ -37,6 +37,26 @@ function pct(p: Profile, s: SkillId) {
   return Math.round((st.correct / st.attempts) * 100);
 }
 
+/** Apertura dell'Isola Lontana (seconda parte dell'anno) scelta dal genitore. */
+function act2Select(p: Profile) {
+  const opts: [number, string][] = [
+    [0, p.bossDone ? 'Aperta (Glitch è già stato battuto)' : 'Chiusa: si apre dopo aver battuto Glitch'],
+    [1, 'Aperta: si parte dal Ponte del Cento'],
+    [2, 'Aperta con tutte le zone (riporto, prestito, tabelline subito)'],
+  ];
+  const sel = h(
+    'select',
+    { id: `act2-${p.id}`, 'aria-label': `Isola Lontana di ${p.name}` },
+    ...opts.map(([v, label]) => h('option', { value: String(v), selected: (p.act2Mode ?? 0) === v }, label))
+  ) as HTMLSelectElement;
+  sel.addEventListener('change', () => {
+    p.act2Mode = Number(sel.value) as 0 | 1 | 2;
+    persist();
+    toast(p.act2Mode ? `${p.name}: Isola Lontana aperta` : `${p.name}: Isola Lontana di nuovo legata alla storia`);
+  });
+  return h('label', { class: 'setting col act2-setting' }, h('span', {}, "⛵ Isola Lontana (seconda parte dell'anno)"), sel);
+}
+
 /** Selettore del livello: il genitore può far partire il bambino da un livello più alto. */
 function levelSelect(p: Profile, k: SkillId, lvl: number) {
   const labels = LEVEL_LABELS[k];
@@ -94,6 +114,7 @@ export function showParents() {
         week.length ? h('p', { class: 'muted' }, 'Ultimi giorni: ' + week.map((d) => `${d.date.slice(5)} ${fmtMin(d.seconds)}`).join(' · ')) : null,
         strong.length ? h('p', {}, '💪 Punti forti: ' + strong.map((k) => SKILL_INFO[k].name).join(', ')) : null,
         weak.length ? h('p', {}, '🎯 Da allenare: ' + weak.map((k) => SKILL_INFO[k].name).join(', ')) : null,
+        act2Select(p),
         h('p', { class: 'muted' }, 'Puoi scegliere il livello di ogni abilità: il gioco parte da lì e lo abbassa solo se servono più esercizi facili.'),
         h('div', { class: 'stat-list' }, ...rows),
         h('p', { class: 'muted' }, 'Missioni per zona: ' + ZONES.map((z) => `${z.short} ${p.zoneProgress[z.id]}/3`).join(' · '))

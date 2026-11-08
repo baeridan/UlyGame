@@ -32,6 +32,8 @@ export interface Profile {
   boss2Done: boolean;
   /** isola mostrata sulla mappa (1 o 2) */
   lastAct: 1 | 2;
+  /** Isola Lontana scelta dal genitore: 0 = si apre dopo Glitch, 1 = aperta, 2 = tutte le zone aperte */
+  act2Mode: 0 | 1 | 2;
   skills: Partial<Record<SkillId, SkillStat>>;
   /** cantiere: colonne 8x8, ognuna lista di tipi di blocco */
   sandbox: number[][];
@@ -94,6 +96,7 @@ export function newProfile(name: string, avatar: Avatar): Profile {
     bossDone: false,
     boss2Done: false,
     lastAct: 1,
+    act2Mode: 0,
     skills: {},
     sandbox: Array.from({ length: 64 }, () => []),
     ores: 0,
@@ -187,3 +190,6 @@ export function timeExceeded(): boolean {
   if (save.settings.unlockedUntil === today()) return false;
   return p.play.date === today() && p.play.seconds >= lim * 60;
 }
+
+/** L'Isola Lontana è raggiungibile? (dopo Glitch o perché l'ha aperta un genitore) */
+export const act2Open = (p: Profile) => p.bossDone || (p.act2Mode ?? 0) > 0;

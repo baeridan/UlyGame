@@ -1,5 +1,5 @@
 import { beginScreen, h, later, onCleanup } from '../core/dom';
-import { me, persist, timeExceeded } from '../core/store';
+import { act2Open, me, persist, timeExceeded } from '../core/store';
 import { brickBtn, brickCounter, avatarView, modal } from '../ui';
 import { drawIsland, zoneAnchor, type Act } from './island';
 import { iso } from '../art/blocks';
@@ -23,7 +23,10 @@ import { playStory } from './dialogue';
 export function zoneUnlocked(z: number) {
   const p = me();
   if (z === 0) return true;
-  if (ZONES[z].act === 2 && ZONES[z - 1].act === 1) return p.bossDone;
+  if (ZONES[z].act === 2) {
+    if (!act2Open(p)) return false;
+    if (p.act2Mode === 2 || ZONES[z - 1].act === 1) return true;
+  }
   return p.zoneProgress[z - 1] >= 3;
 }
 
@@ -36,7 +39,7 @@ const BOSS = {
 export function showMap(after?: () => void, actArg?: Act) {
   if (timeExceeded()) return showRest();
   const p = me();
-  const act: Act = p.bossDone ? (actArg ?? p.lastAct ?? 1) : 1;
+  const act: Act = act2Open(p) ? (actArg ?? p.lastAct ?? 1) : 1;
   if (p.lastAct !== act) {
     p.lastAct = act;
     persist();
@@ -125,8 +128,8 @@ export function showMap(after?: () => void, actArg?: Act) {
     { class: 'crystals', title: act === 1 ? 'Cristalli del Pensiero' : "Uova d'Oro" },
     ...zones.map((z) => h('span', { class: `crystal ${p.zoneProgress[z.id] >= 3 ? 'on' : ''}`, title: z.crystal }, z.reward))
   );
-  const firstTrip = p.bossDone && !p.storySeen.includes('act2-intro');
-  const travel = p.bossDone
+  const firstTrip = act2Open(p) && !p.storySeen.includes('act2-intro');
+  const travel = act2Open(p)
     ? h(
         'button',
         {
